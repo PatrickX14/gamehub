@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { ConfigProvider, ThemeConfig } from "antd";
-import { Layout } from "antd";
-import { Content } from "antd/es/layout/layout";
 import { UserHeader } from "@/components/userheader";
 import styles from "./page.module.css";
 import "./globals.css";
@@ -30,45 +27,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <ConfigProvider theme={themeConfig}>
-          <Layout>
-            {/* header */}
-            <UserHeader />
-            {/* content */}
-            <Content>{children}</Content>
-          </Layout>
-        </ConfigProvider>
+        <div>
+          {/* header */}
+          <UserHeader />
+          {/* content */}
+          <div>{children}</div>
+        </div>
       </body>
     </html>
   );
 }
-
-const themeConfig: ThemeConfig = {
-  token: {
-    // seed token
-    colorPrimary: "#FACC14",
-    colorTextBase: "#364049",
-    colorBgBase: "#F9FAFB",
-    // map token
-    colorTextSecondary: "#627384",
-    colorTextDisabled: "#627384",
-  },
-  components: {
-    Layout: {
-      headerBg: "#F9FAFB",
-      headerHeight: 40,
-    },
-    Menu: {
-      horizontalItemSelectedBg: "#FACC14",
-      horizontalItemHoverBg: "#EEF2F6",
-      horizontalItemBorderRadius: 6,
-      horizontalItemSelectedColor: "#364049",
-      horizontalLineHeight: 0,
-      itemHeight: 10,
-    },
-    Button: {
-      defaultBg: "#FACC14",
-      primaryColor: "#364049",
-    },
-  },
-};

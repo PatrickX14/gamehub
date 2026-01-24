@@ -1,73 +1,56 @@
 "use client";
-import { Button, Menu, Typography } from "antd";
-import { Header } from "antd/es/layout/layout";
-import Title from "antd/es/typography/Title";
-import { usePathname, useRouter } from "next/navigation";
-
-const styles: { [key: string]: React.CSSProperties } = {
-  header: {
-    display: "flex",
-    alignItems: "center",
-    padding: "20px 24px 26px 24px",
-  },
-  logo: {
-    display: "flex",
-    alignItems: "center",
-    gap: 8,
-  },
-  menuWrapper: {
-    flex: 1,
-    display: "flex",
-    justifyContent: "center",
-  },
-  menu: {
-    borderBottom: "none",
-    gap: 24,
-  },
-  actions: {
-    display: "flex",
-    alignItems: "center",
-    gap: 12,
-  },
-  title: { margin: 0, color: "#FCCB1D" },
-};
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export function UserHeader() {
   const pathname = usePathname();
-  const router = useRouter();
   const items = [
-    { key: "/reservation", label: "Reservation" },
+    { key: "/", label: "Reservation" },
     { key: "/store", label: "Store" },
     { key: "/party", label: "Find Party" },
   ];
-  const selectedKey =
-    items.find((item) => pathname.startsWith(item.key))?.key ?? "";
-
   return (
-    <Header style={styles.header}>
+    <div className="bg-[#F9FAFB] justify-around flex h-15 shadow-lg shadow-[#D3D9DE]">
       {/* Logo */}
-      <div style={styles.logo}>
-        <Title level={3} style={styles.title}>
-          🎲 Game Hub
-        </Title>
-      </div>
+      <Link href={"/"} className="my-auto">
+        <div className="flex items-center gap-2">
+          <img src={"/images/dice.png"} className="w-10" />
+          <p className="m-0 text-2xl font-bold text-[#FCCB1D]">Game Hub</p>
+        </div>
+      </Link>
 
-      {/* Center Menu */}
-      <div style={styles.menuWrapper}>
-        <Menu
-          mode="horizontal"
-          items={items}
-          style={styles.menu}
-          selectedKeys={[selectedKey]}
-          onClick={({ key }) => router.push(key)}
-        />
+      {/* Nav menu */}
+      <div className="items-center justify-between hidden sm:flex md:gap-5">
+        {items.map((item) => {
+          const isActive: boolean =
+            item.key === "/" ? pathname === "/" : pathname.startsWith(item.key);
+
+          return (
+            <Link
+              href={item.key}
+              key={item.key}
+              className={`group py-1 px-4 rounded-md ${
+                isActive ? "bg-[#FACC14]" : "hover:bg-[#FACC14]"
+              }`}
+            >
+              <p className={isActive ? "text-[#364049]" : "text-[#627384]"}>
+                {item.label}
+              </p>
+            </Link>
+          );
+        })}
       </div>
 
       {/* Right Actions */}
-      <div style={styles.actions}>
-        <Typography>Welcome, Guest!</Typography>
-        <Button type="primary">Sign In</Button>
+      <div className="flex items-center gap-3">
+        <p className="text-[#627384]">Welcome, Guest!</p>
+        <Link
+          className="bg-[#FACC14] text-[#364049] rounded-md py-1 px-4 cursor-pointer"
+          href={"/"}
+        >
+          Sign In
+        </Link>
       </div>
-    </Header>
+    </div>
   );
 }
