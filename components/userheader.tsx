@@ -10,7 +10,7 @@ export function UserHeader() {
     { key: "/party", label: "Find Party" },
   ];
   return (
-    <div className="bg-[#F9FAFB] justify-around flex h-15 shadow-sm shadow-[#D3D9DE]">
+    <section className="bg-[#F9FAFB] justify-around flex h-15 shadow-sm shadow-[#D3D9DE] mb-6">
       {/* Logo */}
       <Link href={"/"} className="my-auto">
         <div className="flex items-center gap-2">
@@ -20,7 +20,7 @@ export function UserHeader() {
       </Link>
 
       {/* Nav menu */}
-      <div className="items-center justify-between hidden sm:flex md:gap-5">
+      <nav className="items-center justify-between hidden sm:flex md:gap-5">
         {items.map((item) => {
           const isActive: boolean =
             item.key === "/" ? pathname === "/" : pathname.startsWith(item.key);
@@ -41,7 +41,7 @@ export function UserHeader() {
             </Link>
           );
         })}
-      </div>
+      </nav>
 
       {/* Right Actions */}
       <div className="flex items-center gap-3">
@@ -53,6 +53,6 @@ export function UserHeader() {
           Sign In
         </Link>
       </div>
-    </div>
+    </section>
   );
 }
