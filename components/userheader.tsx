@@ -10,7 +10,7 @@ export function UserHeader() {
     { key: "/party", label: "Find Party" },
   ];
   return (
-    <div className="bg-[#F9FAFB] justify-around flex h-15 shadow-lg shadow-[#D3D9DE]">
+    <div className="bg-[#F9FAFB] justify-around flex h-15 shadow-sm shadow-[#D3D9DE]">
       {/* Logo */}
       <Link href={"/"} className="my-auto">
         <div className="flex items-center gap-2">
@@ -33,7 +33,9 @@ export function UserHeader() {
                 isActive ? "bg-[#FACC14]" : "hover:bg-[#FACC14]"
               }`}
             >
-              <p className={isActive ? "text-[#364049]" : "text-[#627384]"}>
+              <p
+                className={`group-hover:text-[#364049] ${isActive ? "text-[#364049]" : "text-[#627384]"}`}
+              >
                 {item.label}
               </p>
             </Link>
