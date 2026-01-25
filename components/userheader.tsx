@@ -14,7 +14,7 @@ export function UserHeader() {
       {/* Logo */}
       <Link href={"/"} className="my-auto">
         <div className="flex items-center gap-2">
-          <img src={"/images/dice.png"} className="w-10" />
+          <img src={"/images/dice.png"} alt="Game Hub Logo" className="w-10" />
           <p className="m-0 text-2xl font-bold text-[#FCCB1D]">Game Hub</p>
         </div>
       </Link>
