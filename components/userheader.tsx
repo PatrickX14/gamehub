@@ -10,7 +10,7 @@ export function UserHeader() {
     { key: "/party", label: "Find Party" },
   ];
   return (
-    <section className="bg-[#F9FAFB] justify-around flex h-15 shadow-sm shadow-[#D3D9DE] mb-6">
+    <section className="bg-[#F9FAFB] sticky top-0 z-50 justify-around flex h-15 shadow-sm shadow-[#D3D9DE]">
       {/* Logo */}
       <Link href={"/"} className="my-auto">
         <div className="flex items-center gap-2">
