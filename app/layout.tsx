@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { UserHeader } from "@/components/userheader";
 import styles from "./page.module.css";
 import "./globals.css";
+import { UserHeader } from "@/components/userHeader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,12 +27,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <div>
+        <main>
           {/* header */}
           <UserHeader />
           {/* content */}
-          <div>{children}</div>
-        </div>
+          <div className="bg-[#EEF2F6] py-6">{children}</div>
+        </main>
       </body>
     </html>
   );
