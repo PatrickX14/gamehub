@@ -47,7 +47,7 @@ export function UserHeader() {
       <div className="flex items-center gap-3">
         <p className="text-[#627384]">Welcome, Guest!</p>
         <Link
-          className="bg-[#FACC14] text-[#364049] rounded-md py-1 px-4 cursor-pointer"
+          className="bg-[#FACC14] hover:bg-[#EAB80B] text-[#364049] rounded-md py-1 px-4 cursor-pointer"
           href={"/"}
         >
           Sign In
