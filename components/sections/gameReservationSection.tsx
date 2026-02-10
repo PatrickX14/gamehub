@@ -83,7 +83,7 @@ const demoShopCards = [
 export function ReservationCardsSection() {
   const [isInputEnable, setInputEnable] = useState<boolean>(false);
   const [selectedCard, setSelectedCard] = useState<string>("");
-  const [selectedShop, setSeleectedShop] = useState<string>("");
+  const [selectedShop, setSelectedShop] = useState<string>("");
   const [shops, setShops] = useState<typeof demoShopCards>(demoShopCards);
 
   function handleGameSelect(gameName: string) {
@@ -102,6 +102,13 @@ export function ReservationCardsSection() {
     );
 
     setShops(filteredShops);
+  }
+
+  function handleShopSeclect(shopName: string, isOpen: boolean) {
+    if (!isOpen) {
+      return;
+    }
+    setSelectedShop(shopName);
   }
 
   return (
@@ -182,10 +189,13 @@ export function ReservationCardsSection() {
               key={index}
               {...card}
               isSelected={selectedShop == card.shopName ? true : false}
-              onClick={() => setSeleectedShop(card.shopName)}
+              onClick={() => handleShopSeclect(card.shopName, card.isOpen)}
             />
           ))}
         </div>
+        <button className="bg-[#FACC14] hover:bg-[#EAB80B] shadow-xl block text-gray-900 font-semibold rounded-md mt-6 mx-auto transition-colors cursor-pointer py-3 px-10">
+          Reserve
+        </button>
       </div>
     </section>
   );
