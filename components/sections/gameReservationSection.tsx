@@ -133,7 +133,7 @@ export function ReservationCardsSection() {
   }
 
   return (
-    <section className="px-10 xl:px-25">
+    <section className="px-10 xl:px-30">
       {/* choose game */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-12 mb-12">
         {demoGameCards.map(
