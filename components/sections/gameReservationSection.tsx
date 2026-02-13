@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { GameReservationCard } from "../gameReservationCard";
 import { ShopReservationCard } from "../shopReservationCard";
+
 const demoGameCards = [
   {
     imageUrl: "/images/demoimages/ArkhamHorrorTGG_box_front_720x.webp",
@@ -59,6 +60,12 @@ const demoShopCards = [
     imageUrl: "/images/demoimages/legendarywargame.png",
     isSelected: false,
     onClick: () => {},
+    tags: [
+      "Food and Drink",
+      "Air Conditioning",
+      "Parking Available",
+      "Cozy Atmosphere",
+    ],
   },
   {
     shopName: "MORE THAN A GAME CAFE",
@@ -68,6 +75,13 @@ const demoShopCards = [
     imageUrl: "/images/demoimages/morethanagamecafe.png",
     isSelected: false,
     onClick: () => {},
+    tags: [
+      "Food and Drink",
+      "Air Conditioning",
+      "Parking Available",
+      "Family Friendly",
+      "Private Room",
+    ],
   },
   {
     shopName: "GameHaus Boardgame Cafe",
@@ -77,6 +91,13 @@ const demoShopCards = [
     imageUrl: "/images/demoimages/GameHausBoardgameCafe.jpg",
     isSelected: false,
     onClick: () => {},
+    tags: [
+      "Food and Drink",
+      "Air Conditioning",
+      "Parking Available",
+      "Family Friendly",
+      "Private Room",
+    ],
   },
 ];
 
@@ -138,37 +159,49 @@ export function ReservationCardsSection() {
         {/* inputs */}
         <form className="grid grid-cols-1 sm:grid-cols-2 gap-6  mt-6">
           <input
-            className="bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]"
+            className={`bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]
+              ${isInputEnable ? "" : "cursor-not-allowed"}
+              `}
             placeholder="Enter your name"
             disabled={isInputEnable ? false : true}
           />
           <input
-            className="bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]"
+            className={`bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]
+              ${isInputEnable ? "" : "cursor-not-allowed"}
+              `}
             placeholder="your@email.com"
             type="email"
             disabled={isInputEnable ? false : true}
           />
           <input
-            className="bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]"
+            className={`bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]
+              ${isInputEnable ? "" : "cursor-not-allowed"}
+              `}
             // placeholder="dd/mm/yyyy"
             type="date"
             disabled={isInputEnable ? false : true}
           />
           <input
-            className="bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]"
+            className={`bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]
+              ${isInputEnable ? "" : "cursor-not-allowed"}
+              `}
             placeholder="Select palyers"
             type="number"
             disabled={isInputEnable ? false : true}
           />
           <input
-            className="bg-[#EEF2F6] md:col-span-2 ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]"
+            className={`bg-[#EEF2F6] md:col-span-2 ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]
+              ${isInputEnable ? "" : "cursor-not-allowed"}
+              `}
             placeholder="Search locations by name"
             type="search"
             disabled={isInputEnable ? false : true}
             onChange={(e) => handleShopSearch(e.target.value)}
           />
           <select
-            className="bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]"
+            className={`bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]
+              ${isInputEnable ? "" : "cursor-not-allowed"}
+              `}
             disabled={isInputEnable ? false : true}
           >
             <option>All Provinces</option>
@@ -176,7 +209,9 @@ export function ReservationCardsSection() {
             <option>Nonthaburi</option>
           </select>
           <input
-            className="bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]"
+            className={`bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]
+              ${isInputEnable ? "" : "cursor-not-allowed"}
+              `}
             type="time"
             disabled={isInputEnable ? false : true}
           />

@@ -1,5 +1,7 @@
 import { MouseEventHandler } from "react";
 import Image from "next/image";
+import CheckIcon from "@mui/icons-material/Check";
+import LensIcon from "@mui/icons-material/Lens";
 interface Props {
   shopName: string;
   location: string;
@@ -7,6 +9,7 @@ interface Props {
   isOpen: boolean;
   imageUrl: string;
   isSelected: boolean;
+  tags: Array<string>;
   onClick: MouseEventHandler<HTMLDivElement>;
 }
 
@@ -18,6 +21,7 @@ export function ShopReservationCard({
   onClick,
   isSelected,
   isOpen,
+  tags,
 }: Props) {
   return (
     <div
@@ -35,13 +39,20 @@ export function ShopReservationCard({
         width={150}
         height={150}
       />
-      <h3
-        className={`font-semibold ${isOpen ? "text-[#16A249]" : "text-[#EF4343]"}`}
-      >
-        {isOpen ? "Open" : "Closed"}
-      </h3>
+
+      {/* status */}
+      <div className="flex items-center gap-1">
+        <LensIcon
+          className={`${isOpen ? "text-[#16A249]" : "text-[#EF4343]"}`}
+        />
+        <h3
+          className={`font-semibold ${isOpen ? "text-[#16A249]" : "text-[#EF4343]"}`}
+        >
+          {isOpen ? "Open" : "Closed"}
+        </h3>
+      </div>
       <h2 className="text-2xl font-bold text-[#364049]">{shopName}</h2>
-      <p className="text-[#364049] ">{location}</p>
+      <p className="text-[#627384] ">{location}</p>
 
       {/* Location and Opening Hours */}
       <div className="mt-3 space-y-2">
@@ -50,7 +61,14 @@ export function ShopReservationCard({
       </div>
 
       {/* tags */}
-      <div></div>
+      <div>
+        {tags.map((tag) => (
+          <div key={tag} className="flex gap-2 items-center">
+            <CheckIcon fontSize="small" className="text-[#16A249]" />
+            <p className="text-[#94A3B8]">{tag}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

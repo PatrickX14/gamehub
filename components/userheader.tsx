@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -14,7 +15,12 @@ export function UserHeader() {
       {/* Logo */}
       <Link href={"/"} className="my-auto">
         <div className="flex items-center gap-2">
-          <img src={"/images/dice.png"} alt="Game Hub Logo" className="w-10" />
+          <Image
+            src={"/images/dice.png"}
+            alt={"Game Hub Logo"}
+            width={"50"}
+            height={"50"}
+          />
           <p className="m-0 text-2xl font-bold text-[#FCCB1D]">Game Hub</p>
         </div>
       </Link>
@@ -48,7 +54,7 @@ export function UserHeader() {
         <p className="text-[#627384]">Welcome, Guest!</p>
         <Link
           className="bg-[#FACC14] hover:bg-[#EAB80B] text-[#364049] rounded-md py-1 px-4 cursor-pointer"
-          href={"/"}
+          href={"/signin"}
         >
           Sign In
         </Link>
