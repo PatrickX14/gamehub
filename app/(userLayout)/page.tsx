@@ -1,4 +1,4 @@
-import { ReservationCardsSection } from "@/components/sections/gameReservationSection";
+import { ReservationCardsSection } from "@/components/sections/index/gameReservationSection";
 
 export default function Home() {
   return (

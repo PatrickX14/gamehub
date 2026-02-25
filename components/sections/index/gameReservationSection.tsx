@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
-import { GameReservationCard } from "../gameReservationCard";
-import { ShopReservationCard } from "../shopReservationCard";
+import { GameReservationCard } from "@/components/gameReservationCard";
+import { ShopReservationCard } from "@/components/shopReservationCard";
 
 const demoGameCards = [
   {

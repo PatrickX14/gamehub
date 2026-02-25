@@ -4,3 +4,22 @@ body {
   background-color: #eef2f6;
   height: 100vh;
 }
+
+/* TODO: set default theme for texts */
+.text-primary {
+  color: #364049;
+}
+.text-secondary {
+  color: #627384;
+}
+.text-muted {
+  color: #94a3b8;
+}
+
+.breadCrumbMutedText {
+  color: #94a3b8;
+}
+
+.breadCrumbMutedText:hover {
+  color: #364049;
+}

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { MouseEventHandler } from "react";
 
 interface Props {
@@ -26,10 +27,12 @@ export function GameReservationCard({
         `}
       onClick={onClick}
     >
-      <img
+      <Image
         src={imageUrl}
         alt="reservation card image"
         className="object-cover w-45 h-55 mx-auto"
+        width={"200"}
+        height={"200"}
       />
       <h2 className="text-2xl font-semibold mt-3 text-[#364049]">{gameName}</h2>
       <p className="text-[#627384]">{description}</p>

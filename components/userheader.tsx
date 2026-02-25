@@ -7,11 +7,11 @@ export function UserHeader() {
   const pathname = usePathname();
   const items = [
     { key: "/", label: "Reservation" },
-    { key: "/store", label: "Store" },
+    { key: "/shop", label: "Shop" },
     { key: "/party", label: "Find Party" },
   ];
   return (
-    <section className="bg-[#F9FAFB] sticky top-0 z-50 justify-between px-30 flex h-15 shadow-sm shadow-[#D3D9DE]">
+    <section className="bg-[#F9FAFB] sticky top-0 z-50 justify-between px-4 xl:px-30 flex h-15 shadow-sm shadow-[#D3D9DE]">
       {/* Logo */}
       <Link href={"/"} className="my-auto">
         <div className="flex items-center gap-2">
@@ -50,8 +50,8 @@ export function UserHeader() {
       </nav>
 
       {/* Right Actions */}
-      <div className="flex items-center gap-3">
-        <p className="text-[#627384]">Welcome, Guest!</p>
+      <div className="flex items-center gap-3 hidden md:flex">
+        <p className="text-[#627384] hidden lg:block">Welcome, Guest!</p>
         <Link
           className="bg-[#FACC14] hover:bg-[#EAB80B] text-[#364049] rounded-md py-1 px-4 cursor-pointer"
           href={"/signin"}
