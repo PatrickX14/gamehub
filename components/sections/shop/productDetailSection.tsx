@@ -26,7 +26,7 @@ export function ProductDetailSection({
 
   return (
     <div className="bg-[#F9FAFB] border border-black/20 shadow-md px-5 lg:px-10 py-12">
-      <h1 className="text-3xl font-semibold mb-5 text-primary">
+      <h1 className="text-3xl font-semibold text-primary">
         {productName}
       </h1>
       <h3 className="text-2xl font-bold mb-5 text-primary">
@@ -57,7 +57,7 @@ export function ProductDetailSection({
           height={"50"}
           alt={"check circle icon"}
         />
-        <p className="text-primary font-semibold">{shopName}</p>
+        <p className="text-primary font-semibold  ">{shopName}</p>
       </div>
 
       {/* buttons */}
