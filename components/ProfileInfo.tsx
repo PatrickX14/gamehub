@@ -80,7 +80,7 @@ export function ProfileInfo() {
         {!isEditing ? (
           <button
             onClick={handleEdit}
-            className="flex items-center gap-1.5 bg-[#364049] hover:bg-[#364049]/80 text-white text-sm px-4 py-2 rounded-md transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 bg-[#FACC14] hover:bg-[#E7B008]/80 text-primary text-sm px-4 py-2 rounded-md transition-colors cursor-pointer"
           >
             <EditIcon style={{ fontSize: 16 }} />
             Edit
@@ -96,7 +96,7 @@ export function ProfileInfo() {
             </button>
             <button
               onClick={handleSave}
-              className="flex items-center gap-1.5 bg-[#FACC14] hover:bg-[#FACC14]/80 text-[#364049] font-semibold text-sm px-4 py-2 rounded-md transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 bg-[#FACC14] hover:bg-[#FACC14]/80 text-primary  text-sm px-4 py-2 rounded-md transition-colors cursor-pointer"
             >
               <SaveIcon style={{ fontSize: 16 }} />
               Save
@@ -226,7 +226,6 @@ export function ProfileInfo() {
   );
 }
 
-/* ── Reusable text field ─────────────────────────────── */
 type FieldProps = {
   icon: React.ReactNode;
   label: string;

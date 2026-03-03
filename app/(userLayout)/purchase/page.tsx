@@ -1,5 +1,5 @@
 import { ProfileMenu } from "@/components/ProfileMenu";
-import { ProfileInfo } from "@/components/ProfileInfo";
+import { PurchaseInfo } from "@/components/PurchaseInfo";
 
 export default function PurchasePage() {
   return (
@@ -9,10 +9,10 @@ export default function PurchasePage() {
       <div>
         <ProfileMenu />
       </div>
-      {/* Profile information */}
+      {/* Purchase information */}
       {/* TODO: make it responsive */}
       <div className="col-span-2">
-        <ProfileInfo />
+        <PurchaseInfo />
       </div>
     </div>
   );
