@@ -1,7 +1,7 @@
 import { ProfileMenu } from "@/components/ProfileMenu";
 import { ProfileInfo } from "@/components/ProfileInfo";
 
-export default function ProfilePage() {
+export default function PurchasePage() {
   return (
     <div className="xl:px-30 grid grid-cols-3 gap-4">
       {/* profile menu */}
