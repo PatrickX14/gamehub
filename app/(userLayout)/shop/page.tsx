@@ -1,6 +1,6 @@
-"use client"
-import { useState, useRef, useEffect } from 'react';
-import TuneIcon from '@mui/icons-material/Tune';
+"use client";
+import { useState, useRef, useEffect } from "react";
+import TuneIcon from "@mui/icons-material/Tune";
 import { SearchbarWithIcon } from "@/components/searchbarWithIcon";
 import { StoreProductCard } from "@/components/storeProductCard";
 
@@ -79,7 +79,7 @@ const demoProducts = [
   },
 ];
 
-const FILTERS = ['Gathering', 'Booked', 'Full', 'In Progress', 'Completed'];
+const FILTERS = ["Gathering", "Booked", "Full", "In Progress", "Completed"];
 
 export default function StorePage() {
   const [filterOpen, setFilterOpen] = useState(false);
@@ -92,13 +92,15 @@ export default function StorePage() {
         setFilterOpen(false);
       }
     }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   function toggleFilter(filter: string) {
-    setActiveFilters(prev =>
-      prev.includes(filter) ? prev.filter(f => f !== filter) : [...prev, filter]
+    setActiveFilters((prev) =>
+      prev.includes(filter)
+        ? prev.filter((f) => f !== filter)
+        : [...prev, filter],
     );
   }
   return (
@@ -118,12 +120,13 @@ export default function StorePage() {
         {/* filter */}
         <div className="relative" ref={filterRef}>
           <button
-            onClick={() => setFilterOpen(prev => !prev)}
+            onClick={() => setFilterOpen((prev) => !prev)}
             className={`flex items-center gap-1.5 h-11 px-4 rounded-full border transition-all duration-200 cursor-pointer
-                            ${filterOpen || activeFilters.length > 0
-                ? 'bg-[#FACC14] border-[#FACC14] text-[#364049]'
-                : 'bg-[#F9FAFB] border-[#627384] text-[#627384] hover:border-[#FACC14] hover:text-[#364049]'
-              }`}
+                            ${
+                              filterOpen || activeFilters.length > 0
+                                ? "bg-[#FACC14] border-[#FACC14] text-[#364049]"
+                                : "bg-[#F9FAFB] border-[#627384] text-[#627384] hover:border-[#FACC14] hover:text-[#364049]"
+                            }`}
           >
             <span className="text-sm font-medium">Filter</span>
             {activeFilters.length > 0 && (
@@ -136,15 +139,17 @@ export default function StorePage() {
 
           {filterOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-lg border border-gray-100 py-2 z-50">
-              <p className="text-xs text-[#627384] font-semibold uppercase tracking-wider px-4 pb-1">Status</p>
-              {FILTERS.map(filter => {
+              <p className="text-xs text-[#627384] font-semibold uppercase tracking-wider px-4 pb-1">
+                Status
+              </p>
+              {FILTERS.map((filter) => {
                 const isActive = activeFilters.includes(filter);
                 return (
                   <button
                     key={filter}
                     onClick={() => toggleFilter(filter)}
                     className={`w-full flex items-center justify-between px-4 py-2 text-sm cursor-pointer transition-colors duration-150
-                                            ${isActive ? 'text-[#364049] font-semibold' : 'text-[#627384] hover:bg-gray-50'}`}
+                                            ${isActive ? "text-[#364049] font-semibold" : "text-[#627384] hover:bg-gray-50"}`}
                   >
                     <span>{filter}</span>
                     {isActive && (

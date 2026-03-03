@@ -2,14 +2,26 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { UserAvatar } from "./userAvatar";
+import { useEffect, useState } from "react";
 
 export function UserHeader() {
+  const [isLogin, setIsLogin] = useState<boolean>(false);
   const pathname = usePathname();
   const items = [
     { key: "/", label: "Reservation" },
     { key: "/shop", label: "Shop" },
     { key: "/party", label: "Find Party" },
   ];
+
+  useEffect(() => {
+    // TODO: remove this, it's for development
+    const loggedIn = window.localStorage.getItem("isLogin") === "true";
+    if (loggedIn) {
+      setIsLogin(true);
+    }
+  }, []);
+
   return (
     <section className="bg-[#F9FAFB] sticky top-0 z-50 justify-between px-4 xl:px-30 flex h-15 shadow-sm shadow-[#D3D9DE]">
       {/* Logo */}
@@ -51,13 +63,20 @@ export function UserHeader() {
 
       {/* Right Actions */}
       <div className="flex items-center gap-3 hidden md:flex">
-        <p className="text-[#627384] hidden lg:block">Welcome, Guest!</p>
-        <Link
-          className="bg-[#FACC14] hover:bg-[#EAB80B] text-[#364049] rounded-md py-1 px-4 cursor-pointer"
-          href={"/signin"}
-        >
-          Sign In
-        </Link>
+        {/* TODO: delete getItem it's for test */}
+        {isLogin ? (
+          <UserAvatar src={"/images/avatar.svg"} />
+        ) : (
+          <>
+            <p className="text-[#627384] hidden lg:block">Welcome, Guest!</p>
+            <Link
+              className="bg-[#FACC14] hover:bg-[#EAB80B] text-[#364049] rounded-md py-1 px-4 cursor-pointer"
+              href={"/signin"}
+            >
+              Sign In
+            </Link>
+          </>
+        )}
       </div>
     </section>
   );

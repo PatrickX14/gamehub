@@ -1,6 +1,17 @@
+"use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { FormEvent } from "react";
 
 export default function SigninPage() {
+  const router = useRouter();
+  function onSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    // TODO: remove this line it's for development purpose
+    localStorage.setItem("isLogin", "true");
+    router.replace("/");
+  }
+
   return (
     <div className="flex h-full">
       {/* Images */}
@@ -15,12 +26,12 @@ export default function SigninPage() {
         </div>
       </div>
 
-      {/* Form */}
+      {/* Login Form */}
       <div className="md:w-1/3 bg-[#2B2B2B] h-full flex flex-col justify-center px-16">
         <h3 className="text-center text-2xl font-semibold text-[#EEF2F6] mb-3">
           Welcome
         </h3>
-        <form className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4" onSubmit={onSubmit}>
           <input
             type="email"
             id="email"
