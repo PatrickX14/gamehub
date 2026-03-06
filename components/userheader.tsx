@@ -3,24 +3,25 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserAvatar } from "./userAvatar";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export function UserHeader() {
-  const [isLogin, setIsLogin] = useState<boolean>(false);
+  const [isLogin, setIsLogin] = useState<boolean>((): boolean => {
+    // TODO: remove this, it's for development
+    const loggedIn: boolean = window.localStorage.getItem("isLogin") === "true";
+    if (loggedIn) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+
   const pathname = usePathname();
   const items = [
     { key: "/", label: "Reservation" },
     { key: "/shop", label: "Shop" },
-    { key: "/party", label: "Find Party" },
+    { key: "/findparty", label: "Find Party" },
   ];
-
-  useEffect(() => {
-    // TODO: remove this, it's for development
-    const loggedIn = window.localStorage.getItem("isLogin") === "true";
-    if (loggedIn) {
-      setIsLogin(true);
-    }
-  }, []);
 
   return (
     <section className="bg-[#F9FAFB] sticky top-0 z-50 justify-between px-4 xl:px-30 flex h-15 shadow-sm shadow-[#D3D9DE]">
@@ -65,7 +66,13 @@ export function UserHeader() {
       <div className="flex items-center gap-3 hidden md:flex">
         {/* TODO: delete getItem it's for test */}
         {isLogin ? (
-          <UserAvatar src={"/images/avatar.svg"} />
+          <UserAvatar
+            src={"/images/avatar.svg"}
+            // TODO: implement this log out
+            onLogoutClick={function (): void {
+              throw new Error("Function not implemented.");
+            }}
+          />
         ) : (
           <>
             <p className="text-[#627384] hidden lg:block">Welcome, Guest!</p>
