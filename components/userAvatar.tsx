@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 interface Props {
   src: string;
+  onLogoutClick: () => void;
 }
 
 const menus = [
