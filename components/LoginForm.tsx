@@ -57,7 +57,11 @@ export function LoginForm() {
         </button>
       </form>
       <p className="text-center text-[#EEF2F6] mt-1">
-        Don&apos;t have an account? <a href="/usersignup">sign up</a>
+        Don&apos;t have an account? <Link href="/usersignup">sign up</Link>
+      </p>
+      <p className="text-center text-[#EEF2F6] mt-1">
+        Are you a shop owner?{" "}
+        <Link href="/shopsignin">sign in shop account</Link>
       </p>
     </div>
   );

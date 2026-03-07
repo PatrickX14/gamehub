@@ -1,5 +1,7 @@
 "use client";
+import { api } from "@/app/lib/axios";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -31,18 +33,9 @@ const menus = [
   },
 ];
 
-export function UserAvatar({ src }: Props) {
-  const router = useRouter();
+export function UserAvatar({ src, onLogoutClick }: Props) {
   const [isOpen, setOpen] = useState<boolean>(false);
   const menuref = useRef<HTMLDivElement>(null);
-
-  function handleMenuClick(link: string) {
-    if (link === "logout") {
-      window.localStorage.removeItem("isLogin");
-    } else {
-      router.replace(link);
-    }
-  }
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -68,19 +61,29 @@ export function UserAvatar({ src }: Props) {
         className={`absolute right-0 w-48 bg-white rounded-2xl shadow-lg border border-gray-100 py-2 z-50 ${isOpen ? "block" : "hidden"}`}
         ref={menuref}
       >
-        {menus.map(({ title, link }) => {
-          return (
+        {menus.map(({ link, title }) =>
+          link === "/logout" ? (
             <button
               key={link}
               className={`w-full flex items-center justify-between px-4 py-2 text-sm cursor-pointer transition-colors duration-150
                 ${title === "Log out" ? "text-red-500" : null}
                 `}
-              onClick={() => handleMenuClick(link)}
+              onClick={onLogoutClick}
             >
               <span>{title}</span>
             </button>
-          );
-        })}
+          ) : (
+            <Link
+              href={link}
+              key={link}
+              className={`w-full flex items-center justify-between px-4 py-2 text-sm cursor-pointer transition-colors duration-150
+                ${title === "Log out" ? "text-red-500" : null}
+                `}
+            >
+              <span>{title}</span>
+            </Link>
+          ),
+        )}
       </div>
     </div>
   );

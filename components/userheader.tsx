@@ -25,7 +25,7 @@ export function UserHeader() {
     }
 
     fetchMe();
-  });
+  }, []);
 
   return (
     <section className="bg-[#F9FAFB] sticky top-0 z-50 justify-between px-4 xl:px-30 flex h-15 shadow-sm shadow-[#D3D9DE]">
@@ -73,8 +73,9 @@ export function UserHeader() {
           <UserAvatar
             src={"/images/avatar.svg"}
             // TODO: implement this log out
-            onLogoutClick={function (): void {
-              throw new Error("Function not implemented.");
+            onLogoutClick={async () => {
+              await api.post("/auth/logout");
+              setIsLogin(false);
             }}
           />
         ) : (
