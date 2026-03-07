@@ -1,7 +1,7 @@
-import { SignupOptionsSelector } from "@/components/signupOptionsSelector";
+import { UserSignupForm } from "@/components/UserSignupForm";
 import Link from "next/link";
 
-export default function UserSigninPage() {
+export default async function UserSigninPage() {
   return (
     <div className="flex h-full">
       {/* Images */}
@@ -24,68 +24,7 @@ export default function UserSigninPage() {
         <p className="text-center text-[#94A3B8] mb-3">
           Choose your account type to get started
         </p>
-        <form className="flex flex-col gap-4 ">
-          <SignupOptionsSelector selectedOption={"user"} />
-          <input
-            type="text"
-            id="name"
-            name="name"
-            placeholder="Full name"
-            required
-            className="bg-[#EEF2F6] py-3 px-2 rounded-lg"
-          />
-          <div className="flex gap-4 justify-between">
-            <select
-              id="gender"
-              name="gender"
-              required
-              className="bg-[#EEF2F6] py-3 px-2 rounded-lg w-full"
-              defaultValue=""
-            >
-              <option value="" disabled>
-                Select gender
-              </option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-              <option value="prefer_not_say">Prefer not to say</option>
-            </select>
-            <input
-              type="date"
-              id="birthday"
-              name="birthday"
-              required
-              className="bg-[#EEF2F6] py-3 px-2 rounded-lg w-full"
-            />
-          </div>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="Email address"
-            required
-            className="bg-[#EEF2F6] py-3 px-2 rounded-lg"
-          />
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Password"
-            required
-            className="bg-[#EEF2F6] py-3 px-2 rounded-lg"
-          />
-          <input
-            type="password"
-            id="confirmPassword"
-            name="confirmPassword"
-            placeholder="Confirm password"
-            required
-            className="bg-[#EEF2F6] py-3 px-2 rounded-lg"
-          />
-          <button className="bg-[#FCCB1D] py-3 rounded-lg" type="submit">
-            Sign Up
-          </button>
-        </form>
+        <UserSignupForm />
 
         <Link href="/signin" className="text-center text-[#EEF2F6] mt-1">
           Already have an account?
