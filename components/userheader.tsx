@@ -3,25 +3,29 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserAvatar } from "./userAvatar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { api } from "@/app/lib/axios";
 
 export function UserHeader() {
-  const [isLogin, setIsLogin] = useState<boolean>((): boolean => {
-    // TODO: remove this, it's for development
-    const loggedIn: boolean = window.localStorage.getItem("isLogin") === "true";
-    if (loggedIn) {
-      return true;
-    } else {
-      return false;
-    }
-  });
-
+  const [isLogin, setIsLogin] = useState<boolean>(false);
   const pathname = usePathname();
   const items = [
     { key: "/", label: "Reservation" },
     { key: "/shop", label: "Shop" },
     { key: "/findparty", label: "Find Party" },
   ];
+
+  useEffect(() => {
+    async function fetchMe() {
+      const res = await api.get<{ userId: number }>("/auth/me");
+
+      if (res.data.userId) {
+        setIsLogin(true);
+      }
+    }
+
+    fetchMe();
+  });
 
   return (
     <section className="bg-[#F9FAFB] sticky top-0 z-50 justify-between px-4 xl:px-30 flex h-15 shadow-sm shadow-[#D3D9DE]">

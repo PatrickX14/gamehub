@@ -1,6 +1,4 @@
 import { UserSignupForm } from "@/components/UserSignupForm";
-import Link from "next/link";
-
 export default async function UserSigninPage() {
   return (
     <div className="flex h-full">
@@ -17,19 +15,7 @@ export default async function UserSigninPage() {
       </div>
 
       {/* Form */}
-      <div className="md:w-1/3 bg-[#2B2B2B] h-full flex flex-col justify-center px-16">
-        <h3 className="text-center text-2xl font-semibold text-[#EEF2F6]">
-          Create an account
-        </h3>
-        <p className="text-center text-[#94A3B8] mb-3">
-          Choose your account type to get started
-        </p>
-        <UserSignupForm />
-
-        <Link href="/signin" className="text-center text-[#EEF2F6] mt-1">
-          Already have an account?
-        </Link>
-      </div>
+      <UserSignupForm />
     </div>
   );
 }

@@ -1,6 +1,5 @@
 "use client";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
@@ -11,6 +10,7 @@ import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import WcOutlinedIcon from "@mui/icons-material/WcOutlined";
+import { api } from "@/app/lib/axios";
 
 interface ProfileData {
   name: string;
@@ -66,6 +66,22 @@ export function ProfileInfo() {
       return { ...prev, addresses: updated };
     });
   };
+
+  useEffect(() => {
+    async function getUserData() {
+      const res = await api.get("/user");
+      if (res.data) {
+        setProfile({
+          email: res.data.email,
+          name: res.data.firstName + " " + res.data.lastName,
+          addresses: ["123 Main St, Bangkok, Thailand"],
+          gender: res.data.gender,
+          phone: res.data.phoneNumber,
+        });
+      }
+    }
+    getUserData();
+  }, []);
 
   return (
     <div className="bg-[#F9FAFB] rounded-md shadow-md overflow-hidden">
