@@ -2,8 +2,10 @@
 import { FormEvent } from "react";
 import { SignupOptionsSelector } from "./signupOptionsSelector";
 import { api } from "@/app/lib/axios";
+import { useRouter } from "next/navigation";
 
 export function UserSignupForm() {
+  const router = useRouter();
   async function loginAction(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -14,7 +16,7 @@ export function UserSignupForm() {
         firstName: formData.get("firstName"),
         lastName: formData.get("lastName"),
       });
-      console.log("Register Success: ", res);
+      router.replace("/signin");
     } catch (err) {
       console.log(err);
     }
