@@ -21,11 +21,11 @@ interface ProfileData {
 }
 
 const initialProfile: ProfileData = {
-  name: "Patrick Doe",
-  gender: "Male",
-  phone: "+66 81 234 5678",
-  email: "patrick@example.com",
-  addresses: ["123 Main St, Bangkok, Thailand"],
+  name: "No Data",
+  gender: "No Data",
+  phone: "No Data",
+  email: "No Data",
+  addresses: [],
 };
 
 export function ProfileInfo() {
@@ -74,7 +74,7 @@ export function ProfileInfo() {
         setProfile({
           email: res.data.email,
           name: res.data.firstName + " " + res.data.lastName,
-          addresses: ["123 Main St, Bangkok, Thailand"],
+          addresses: [],
           gender: res.data.gender,
           phone: res.data.phoneNumber,
         });

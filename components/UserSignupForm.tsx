@@ -67,13 +67,13 @@ export function UserSignupForm() {
             <option value="FEMALE">Female</option>
             <option value="OTHER">Other</option>
           </select>
-          <input
+          {/* <input
             type="date"
             id="birthday"
             name="birthday"
             required
             className="bg-[#EEF2F6] py-3 px-2 rounded-lg w-full"
-          />
+          /> */}
         </div>
         <input
           type="email"
