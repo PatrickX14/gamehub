@@ -1,8 +1,8 @@
 "use client";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { useState } from "react";
-import { TextInput } from "./Input";
+import { ChangeEvent, useState } from "react";
+import { DateInput, Select, TextInput } from "./Input";
 import { SectionCard } from "./Cards";
 
 export function AdminTable() {
@@ -31,26 +31,111 @@ export function OrdersTable({
   itemsPerPage,
 }: OrderTableProps) {
   const [pageNumber, setPageNumber] = useState<number>(0);
-  const [pageLimit, setPageLitmit] = useState<number>(itemsPerPage ?? 20);
+  const [pageLimit, setPageLimit] = useState<number>(itemsPerPage ?? 20);
+  const [queries, setQueries] = useState({
+    orderId: "",
+    productId: "",
+    userName: "",
+    status: "",
+    paymentMethod: "",
+    dateFrom: "",
+    dateTo: "",
+  });
 
-  const totalPages: number = Math.ceil(data.length / pageLimit);
-  const tableData: OrderData[] = data.slice(
+  const filteredData = data.filter(
+    ({ orderId, productId, userName, status, paymentMethod, date }) =>
+      orderId.toLowerCase().includes(queries.orderId.toLowerCase()) &&
+      productId.toLowerCase().includes(queries.productId.toLowerCase()) &&
+      userName.toLowerCase().includes(queries.userName.toLowerCase()) &&
+      (queries.status === "" || status === queries.status) &&
+      (queries.paymentMethod === "" ||
+        paymentMethod === queries.paymentMethod) &&
+      (queries.dateFrom === "" || date >= queries.dateFrom) &&
+      (queries.dateTo === "" || date <= queries.dateTo),
+  );
+  const totalPages = Math.ceil(filteredData.length / pageLimit);
+  const pagedData = filteredData.slice(
     pageNumber * pageLimit,
     (pageNumber + 1) * pageLimit,
   );
 
+  function handleOrderIdQuery(event: ChangeEvent<HTMLInputElement>) {
+    setQueries((prev) => ({ ...prev, orderId: event.target.value }));
+    setPageNumber(0);
+  }
+
+  function handleProductIdQuery(event: ChangeEvent<HTMLInputElement>) {
+    setQueries((prev) => ({ ...prev, productId: event.target.value }));
+    setPageNumber(0);
+  }
+
+  function handleUserNameQuery(event: ChangeEvent<HTMLInputElement>) {
+    setQueries((prev) => ({ ...prev, userName: event.target.value }));
+    setPageNumber(0);
+  }
+
+  function handleQueryChange(key: keyof typeof queries) {
+    return (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      setQueries((prev) => ({ ...prev, [key]: event.target.value }));
+      setPageNumber(0);
+    };
+  }
+
   return (
     <div>
-      <SectionCard title={"Orders"} description={""}>
+      <SectionCard title={tableTitle} description={""}>
         {/* Search */}
-        <div className="flex gap-2 mb-2">
+        <div className="flex justify-between mb-2">
           <TextInput
-            name={tableTitle}
-            label={"Order id"}
-            // onChange={}
+            name="orderId"
+            label="Order id"
+            onChange={handleOrderIdQuery}
           />
-          <TextInput name={"productId"} label={"Product id"} />
-          <TextInput name={"userName"} label={"User name"} />
+          <TextInput
+            name="productId"
+            label="Product id"
+            onChange={handleProductIdQuery}
+          />
+          <TextInput
+            name="userName"
+            label="User name"
+            onChange={handleUserNameQuery}
+          />
+
+          {/* Status filters */}
+          <Select
+            options={[
+              "All Status",
+              "Pending",
+              "Processing",
+              "Shipped",
+              "Delivered",
+              "Cancelled",
+              "Refunded",
+            ]}
+            onChange={handleQueryChange("status")}
+            label={"Status"}
+          />
+
+          {/* Payment method filters */}
+          <Select
+            options={[
+              "All Payment",
+              "AirPay",
+              "TrueMoney Wallet",
+              "Rabbit LINE Pay",
+              "KBank Mobile Banking",
+              "SCB Easy",
+              "PromptPay",
+              "WeChat Pay Thai",
+            ]}
+            onChange={handleQueryChange("paymentMethod")}
+            label={"Payment Method"}
+          />
+
+          {/* Date range */}
+          <DateInput onChange={handleQueryChange("dateFrom")} label={"From"} />
+          <DateInput onChange={handleQueryChange("dateTo")} label={"To"} />
         </div>
 
         {/* Table */}
@@ -77,7 +162,7 @@ export function OrdersTable({
             </tr>
           </thead>
           <tbody>
-            {tableData.map(
+            {pagedData.map(
               ({
                 orderId,
                 productId,

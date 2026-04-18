@@ -1,22 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { ChangeEventHandler, useState } from "react";
 
 interface InputBaseProps {
   label: string;
-  input: React.ReactNode;
+  children: React.ReactNode;
 }
 
-function InputBase({ label, input }: InputBaseProps) {
+function InputBase({ label, children }: InputBaseProps) {
   return (
     <div className="flex flex-col">
       <label className="text-sm mb-0.5 text-secondary">{label}</label>
-      {input}
+      {children}
     </div>
   );
 }
 
-interface TextInputProps extends Omit<InputBaseProps, "input"> {
+interface TextInputProps extends Omit<InputBaseProps, "children"> {
   name: string;
   defaultValue?: string;
   required?: boolean;
@@ -31,18 +31,54 @@ export function TextInput({
   onChange,
 }: TextInputProps) {
   return (
-    <InputBase
-      label={label}
-      input={
-        <input
-          className="border border-[#364049]/20 rounded-md w-full overflow-hidden py-1 px-2 text-primary"
-          required={required}
-          name={name}
-          defaultValue={defaultValue ? defaultValue : ""}
-          onChange={onChange}
-        />
-      }
-    />
+    <InputBase label={label}>
+      <input
+        className="border border-[#364049]/20 rounded-md w-full overflow-hidden py-1 px-2 text-primary"
+        required={required}
+        name={name}
+        defaultValue={defaultValue ? defaultValue : ""}
+        onChange={onChange}
+      />
+    </InputBase>
+  );
+}
+
+interface SelectProps extends Omit<InputBaseProps, "children"> {
+  options: string[];
+  onChange: ChangeEventHandler<HTMLSelectElement>;
+}
+
+export function Select({ label, options, onChange }: SelectProps) {
+  return (
+    <InputBase label={label}>
+      <select
+        name="status"
+        onChange={onChange}
+        className="border border-[#364049]/20 rounded-md w-full overflow-hidden py-1 px-2 text-primary"
+      >
+        {options.map((s, index: number) => (
+          <option key={s} value={index === 0 ? "" : s}>
+            {s}
+          </option>
+        ))}
+      </select>
+    </InputBase>
+  );
+}
+
+interface DateInputProps extends Omit<InputBaseProps, "children"> {
+  onChange: ChangeEventHandler<HTMLInputElement>;
+}
+
+export function DateInput({ label, onChange }: DateInputProps) {
+  return (
+    <InputBase label={label}>
+      <input
+        type="date"
+        onChange={onChange}
+        className="border border-[#364049]/20 rounded-md w-full overflow-hidden py-1 px-2 text-primary"
+      />
+    </InputBase>
   );
 }
 
