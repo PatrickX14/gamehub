@@ -1,5 +1,6 @@
 "use client";
 import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis } from "recharts";
+import { SectionCard } from "./Cards";
 
 interface AdminSalesBarChartProps {
   data: {
@@ -10,10 +11,7 @@ interface AdminSalesBarChartProps {
 
 export function AdminSalesBarChart({ data }: AdminSalesBarChartProps) {
   return (
-    <div>
-      <h3 className="text-2xl my-2 font-semibold text-secondary">
-        AdminBarChart
-      </h3>
+    <SectionCard title={"AdminBarChart"} description={""}>
       <BarChart
         data={data}
         responsive
@@ -24,7 +22,6 @@ export function AdminSalesBarChart({ data }: AdminSalesBarChartProps) {
           aspectRatio: 1.618,
         }}
         margin={{ right: 30, left: 20, top: 40, bottom: 20 }}
-        className="bg-[#F9FAFB] rounded-md shadow-md border border-[#0000]/20"
       >
         <XAxis dataKey={"month"} />
         <YAxis
@@ -48,6 +45,6 @@ export function AdminSalesBarChart({ data }: AdminSalesBarChartProps) {
           barSize={70}
         />
       </BarChart>
-    </div>
+    </SectionCard>
   );
 }
