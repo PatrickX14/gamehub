@@ -133,7 +133,7 @@ export default function ShopSigninPage() {
           </button>
         </form>
 
-        <a href="/signin" className="text-center text-[#EEF2F6] mt-1">
+        <a href="/usersignin" className="text-center text-[#EEF2F6] mt-1">
           Already have an account?
         </a>
       </div>

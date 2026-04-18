@@ -112,7 +112,7 @@ export function UserSignupForm() {
           Sign Up
         </button>
       </form>
-      <Link href="/signin" className="text-center text-[#EEF2F6] mt-1">
+      <Link href="/usersignin" className="text-center text-[#EEF2F6] mt-1">
         Already have an account?
       </Link>
     </div>

@@ -1,8 +1,6 @@
 "use client";
-import { api } from "@/app/lib/axios";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 interface Props {
@@ -48,14 +46,15 @@ export function UserAvatar({ src, onLogoutClick }: Props) {
   }, []);
 
   return (
-    <div className="relative">
+    <div className="relative ">
       <Image
         src={src}
         width={"50"}
         height={"50"}
         alt="avatar image"
         onClick={() => !isOpen && setOpen(true)}
-        className="cursor-pointer"
+        className="cursor-pointer rounded-full shadow-3xl"
+        unoptimized
       />
       <div
         className={`absolute right-0 w-48 bg-white rounded-2xl shadow-lg border border-gray-100 py-2 z-50 ${isOpen ? "block" : "hidden"}`}

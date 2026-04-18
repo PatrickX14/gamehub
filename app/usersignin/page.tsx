@@ -6,9 +6,11 @@ export default function SigninPage() {
     <div className="flex h-full">
       {/* Images Section */}
       <div className="hidden md:flex md:w-2/3 md:h-full relative overflow-hidden bg-zinc-900  border-white">
-
         {/* Top Right Image */}
-        <div className="absolute inset-0" style={{ clipPath: "polygon(0 0, 100% 0, 100% 50%)" }}>
+        <div
+          className="absolute inset-0"
+          style={{ clipPath: "polygon(0 0, 100% 0, 100% 50%)" }}
+        >
           <Image
             src="/images/loginbackground2.jpeg"
             alt="Warhammer Character"
@@ -18,7 +20,10 @@ export default function SigninPage() {
         </div>
 
         {/* Middle/Left Image */}
-        <div className="absolute inset-0" style={{ clipPath: "polygon(0 0, 100% 50%, 0 100%)" }}>
+        <div
+          className="absolute inset-0"
+          style={{ clipPath: "polygon(0 0, 100% 50%, 0 100%)" }}
+        >
           <Image
             src="/images/loginbackground1.jpg"
             alt="Space Marine vs Tyranid"
@@ -28,7 +33,10 @@ export default function SigninPage() {
         </div>
 
         {/* Bottom Right Image */}
-        <div className="absolute inset-0" style={{ clipPath: "polygon(0 100%, 100% 50%, 100% 100%)" }}>
+        <div
+          className="absolute inset-0"
+          style={{ clipPath: "polygon(0 100%, 100% 50%, 100% 100%)" }}
+        >
           <Image
             src="/images/loginbackground3.jpeg"
             alt="Blood Angels Space Marine"
@@ -39,9 +47,29 @@ export default function SigninPage() {
 
         {/* White gap lines */}
         <div className="absolute inset-0 z-10 pointer-events-none">
-          <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
-            <line x1="0" y1="0" x2="100" y2="50" stroke="white" strokeWidth="6" vectorEffect="non-scaling-stroke" />
-            <line x1="0" y1="100" x2="100" y2="50" stroke="white" strokeWidth="6" vectorEffect="non-scaling-stroke" />
+          <svg
+            className="w-full h-full"
+            preserveAspectRatio="none"
+            viewBox="0 0 100 100"
+          >
+            <line
+              x1="0"
+              y1="0"
+              x2="100"
+              y2="50"
+              stroke="white"
+              strokeWidth="6"
+              vectorEffect="non-scaling-stroke"
+            />
+            <line
+              x1="0"
+              y1="100"
+              x2="100"
+              y2="50"
+              stroke="white"
+              strokeWidth="6"
+              vectorEffect="non-scaling-stroke"
+            />
           </svg>
         </div>
 
@@ -59,7 +87,7 @@ export default function SigninPage() {
       </div>
 
       {/* Login Form */}
-      <LoginForm />
+      <LoginForm accountType={"user"} />
     </div>
   );
 }

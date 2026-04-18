@@ -33,10 +33,13 @@ const menus = [
   },
 ];
 
-export function ProfileMenu() {
-  const pathname = usePathname();
+interface MenuProps {
+  selectedMenu: "Profile" | "Purchase" | "Bookings" | "Parties";
+}
+
+export function ProfileMenu({ selectedMenu }: MenuProps) {
   return (
-    <div className="bg-[#F9FAFB] rounded-md overflow-hidden shadow-md">
+    <div className="bg-[#F9FAFB] rounded-md overflow-hidden shadow-md fixed w-20 lg:w-100 2xl:w-135">
       {menus.map(({ title, description, menuImage, link }) => (
         <Link
           key={title}
@@ -44,10 +47,10 @@ export function ProfileMenu() {
           href={link}
         >
           <div
-            className={`absolute left-0 h-full w-2 z-50 ${pathname === link ? "bg-[#FACC14]" : "bg-transparent"}`}
+            className={`absolute left-0 h-full w-2 z-50 ${selectedMenu === title ? "bg-[#FACC14]" : "bg-transparent"}`}
           ></div>
           <div
-            className={`rounded-full border border-[#364049]/20 shadown-md p-1 ${pathname === link && "bg-[#FACC14]"}`}
+            className={`rounded-full border border-[#364049]/20 shadown-md p-1 ${selectedMenu === title && "bg-[#FACC14]"}`}
           >
             {menuImage}
           </div>

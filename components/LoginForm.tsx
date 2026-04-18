@@ -1,32 +1,24 @@
 "use client";
-import { api } from "@/app/lib/axios";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { FormEvent } from "react";
+import { SignInOptionsSelector } from "./SignInOptionSelector";
+import { login } from "@/app/lib/api/auth";
+import { useActionState } from "react";
 
-export function LoginForm() {
-  const router = useRouter();
-  async function onSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    try {
-      const res = await api.post("/auth/login", {
-        email: formData.get("email"),
-        password: formData.get("password"),
-      });
-      console.log(res);
-      router.replace("/");
-    } catch (err) {
-      console.log(err);
-    }
-  }
+interface props {
+  accountType: "user" | "shop";
+}
 
+export function LoginForm({ accountType }: props) {
+  const [state, formAction] = useActionState(login, {
+    error: null,
+  });
   return (
     <div className="md:w-1/3 bg-[#2B2B2B] h-full flex flex-col justify-center px-16">
       <h3 className="text-center text-2xl font-semibold text-[#EEF2F6] mb-3">
         Welcome
       </h3>
-      <form className="flex flex-col gap-4" onSubmit={onSubmit}>
+      <form className="flex flex-col gap-4" action={formAction}>
+        <SignInOptionsSelector selectedOption={accountType} />
         <input
           type="email"
           id="email"
@@ -43,6 +35,7 @@ export function LoginForm() {
           required
           className="bg-[#EEF2F6] py-3 px-2 rounded-lg"
         />
+        <p className="text-sm text-center text-red-500">{state.error}</p>
         <Link
           href="/forgot-password"
           className="text-[#EEF2F6] self-end size-fit"
@@ -56,12 +49,11 @@ export function LoginForm() {
           Sign In
         </button>
       </form>
-      <p className="text-center text-[#EEF2F6] mt-1">
-        Don&apos;t have an account? <Link href="/usersignup">sign up</Link>
-      </p>
-      <p className="text-center text-[#EEF2F6] mt-1">
-        Are you a shop owner?{" "}
-        <Link href="/shopsignin">sign in shop account</Link>
+      <p className="text-center text-gray-300 text-[#EEF2F6] mt-1">
+        Don&apos;t have an account?{" "}
+        <Link href="/usersignup" className="text-white underline">
+          sign up
+        </Link>
       </p>
     </div>
   );

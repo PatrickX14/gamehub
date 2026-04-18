@@ -1,18 +1,18 @@
 import { ProfileMenu } from "@/components/ProfileMenu";
-import { PurchaseInfo } from "@/components/PurchaseInfo";
+import { UserAddressForm } from "@/components/UserAddressForm";
 
-export default function PurchasePage() {
+export default async function NewAddressPage() {
   return (
     <div className="xl:px-30 grid grid-cols-3 gap-4">
       {/* profile menu */}
       {/* TODO: make it responsive */}
       <div>
-        <ProfileMenu selectedMenu={"Purchase"} />
+        <ProfileMenu selectedMenu={"Profile"} />
       </div>
-      {/* Purchase information */}
+      {/* Profile information */}
       {/* TODO: make it responsive */}
-      <div className="col-span-2">
-        <PurchaseInfo />
+      <div className="col-span-2 flex flex-col gap-5">
+        <UserAddressForm />
       </div>
     </div>
   );

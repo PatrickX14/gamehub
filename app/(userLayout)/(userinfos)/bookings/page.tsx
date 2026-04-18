@@ -56,7 +56,7 @@ export default function BookingPage() {
     <div className="xl:px-30 grid grid-cols-1 lg:grid-cols-3 gap-4">
       {/* profile menu */}
       <div className="lg:col-span-1">
-        <ProfileMenu />
+        <ProfileMenu selectedMenu={"Bookings"} />
       </div>
 
       {/* user bookings information */}

@@ -4,10 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserAvatar } from "./userAvatar";
 import { useEffect, useState } from "react";
-import { api } from "@/app/lib/axios";
+import { getAvatar } from "@/app/lib/api/user";
+import { useRouter } from "next/navigation";
 
 export function UserHeader() {
+  const router = useRouter();
   const [isLogin, setIsLogin] = useState<boolean>(false);
+  const [avatarUrl, setAvatarUrl] = useState<string>("");
   const pathname = usePathname();
   const items = [
     { key: "/", label: "Reservation" },
@@ -16,19 +19,21 @@ export function UserHeader() {
   ];
 
   useEffect(() => {
-    async function fetchMe() {
-      const res = await api.get<{ userId: number }>("/auth/me");
-
-      if (res.data.userId) {
+    async function fetechAvatar() {
+      const avatarUrl = await getAvatar();
+      if (avatarUrl) {
+        setAvatarUrl(avatarUrl.imageUrl);
         setIsLogin(true);
+      } else {
+        setAvatarUrl("");
+        setIsLogin(false);
       }
     }
-
-    fetchMe();
+    fetechAvatar();
   }, []);
 
   return (
-    <section className="bg-[#F9FAFB] sticky top-0 z-50 justify-between px-4 xl:px-30 flex h-15 shadow-sm shadow-[#D3D9DE]">
+    <section className="bg-[#2B2B2B] sticky top-0 z-100 justify-between px-4 xl:px-30 flex h-15 shadow-sm shadow-[#D3D9DE]">
       {/* Logo */}
       <Link href={"/"} className="my-auto">
         <div className="flex items-center gap-2">
@@ -69,12 +74,12 @@ export function UserHeader() {
       {/* Right Actions */}
       <div className="flex items-center gap-3 hidden md:flex">
         {/* TODO: delete getItem it's for test */}
-        {isLogin ? (
+        {isLogin && avatarUrl ? (
           <UserAvatar
-            src={"/images/avatar.svg"}
-            // TODO: implement this log out
-            onLogoutClick={async () => {
-              await api.post("/auth/logout");
+            src={avatarUrl}
+            onLogoutClick={() => {
+              localStorage.removeItem("accessToken");
+              router.push("/");
               setIsLogin(false);
             }}
           />
@@ -83,7 +88,7 @@ export function UserHeader() {
             <p className="text-[#627384] hidden lg:block">Welcome, Guest!</p>
             <Link
               className="bg-[#FACC14] hover:bg-[#EAB80B] text-[#364049] rounded-md py-1 px-4 cursor-pointer"
-              href={"/signin"}
+              href={"/usersignin"}
             >
               Sign In
             </Link>
