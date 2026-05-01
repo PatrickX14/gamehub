@@ -11,6 +11,9 @@ import {
   ExpandLess,
   Store,
   TableChart,
+  Casino,
+  TableBar,
+  Liquor,
 } from "@mui/icons-material";
 import { usePathname } from "next/navigation";
 
@@ -23,6 +26,9 @@ export function Navigations() {
     { title: "Overall", link: "/admin", icon: <Summarize /> },
     { title: "Orders", link: "/admin/orders", icon: <ListAlt /> },
     { title: "Products", link: "/admin/products", icon: <Inventory /> },
+    { title: "Games", link: "/admin/games", icon: <Casino /> },
+    { title: "Bookings", link: "/admin/bookings", icon: <TableBar /> },
+    { title: "Parties", link: "/admin/parties", icon: <Liquor /> },
     { title: "Settings", link: "/admin", icon: <Settings /> },
   ];
   return (

@@ -9,8 +9,13 @@ export async function login(
 ) {
   const email = formData.get("email");
   const password = formData.get("password");
+  const accountType = formData.get("accountType");
 
-  const res = await fetch(`${API_URL}/auth/login`, {
+  if (accountType !== "USER" && accountType !== "SHOP") {
+    return { error: "Invalid account type" };
+  }
+
+  const res = await fetch(`${API_URL}/auth/login?role=${accountType}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -22,9 +27,16 @@ export async function login(
   const data = await res.json();
 
   if (!res.ok) {
-    return { error: data.message || "Login failed" };
+    return { error: (data.message as string) || "Login failed" };
   } else {
     await createLocalStorageItem("accessToken", data.accessToken);
-    redirect("/");
   }
+
+  if (data.role === "USER") {
+    redirect("/");
+  } else if (data.role === "SHOP") {
+    redirect("/admin");
+  }
+
+  return { error: null };
 }

@@ -1,24 +1,45 @@
-import Link from "next/link";
+"use client";
+import { useState } from "react";
 
-interface Props {
-  selectedOption: "user" | "shop";
-}
+export function AccountTypePicker() {
+  const [selected, setSelected] = useState("USER");
 
-export function SignInOptionsSelector({ selectedOption }: Props) {
+  const options = [
+    { value: "USER", label: "User Account" },
+    { value: "SHOP", label: "Shop Account" },
+  ];
+  console.log(selected);
   return (
-    <div className="flex justify-between gap-4">
-      <Link
-        href={"/usersignin"}
-        className={`py-2 px-2 w-full text-center rounded-lg font-semibold ${selectedOption === "user" ? "bg-[#FCCB1D] text-[#364049]" : "hover:bg-[#FCCB1D]/30 text-[#F9FAFB]"}`}
-      >
-        User Account
-      </Link>
-      <Link
-        href={"/shopsignin"}
-        className={`py-2 px-2 w-full text-center rounded-lg font-semibold ${selectedOption === "shop" ? "bg-[#FCCB1D] text-[#364049]" : "hover:bg-[#FCCB1D]/30 text-[#F9FAFB]"}`}
-      >
-        Shop Account
-      </Link>
+    <div className="flex justify-between items-center gap-2 rounded-xl">
+      {options.map((opt) => {
+        const isSelected = selected === opt.value;
+        return (
+          <label
+            key={opt.value}
+            className={`
+              relative flex items-center justify-center px-10 py-3 rounded-lg cursor-pointer
+              transition-all duration-200 select-none w-full
+              ${isSelected ? "bg-[#FCCB1D] shadow-md" : "bg-transparent hover:bg-white/5"}
+            `}
+          >
+            <input
+              type="radio"
+              name="accountType"
+              value={opt.value}
+              checked={isSelected}
+              onChange={() => setSelected(opt.value)}
+              className="sr-only"
+            />
+            <span
+              className={`text-sm font-bold tracking-wide transition-colors duration-200 ${
+                isSelected ? "text-primary" : "text-white"
+              }`}
+            >
+              {opt.label}
+            </span>
+          </label>
+        );
+      })}
     </div>
   );
 }

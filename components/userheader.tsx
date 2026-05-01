@@ -33,7 +33,7 @@ export function UserHeader() {
   }, []);
 
   return (
-    <section className="bg-[#2B2B2B] sticky top-0 z-100 justify-between px-4 xl:px-30 flex h-15 shadow-sm shadow-[#D3D9DE]">
+    <section className="bg-[#F9FAFB] sticky top-0 z-100 justify-between px-4 xl:px-30 flex h-15 shadow-sm shadow-[#D3D9DE]">
       {/* Logo */}
       <Link href={"/"} className="my-auto">
         <div className="flex items-center gap-2">
@@ -88,7 +88,7 @@ export function UserHeader() {
             <p className="text-[#627384] hidden lg:block">Welcome, Guest!</p>
             <Link
               className="bg-[#FACC14] hover:bg-[#EAB80B] text-[#364049] rounded-md py-1 px-4 cursor-pointer"
-              href={"/usersignin"}
+              href={"/login"}
             >
               Sign In
             </Link>

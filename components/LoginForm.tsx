@@ -1,24 +1,22 @@
 "use client";
 import Link from "next/link";
-import { SignInOptionsSelector } from "./SignInOptionSelector";
+import { AccountTypePicker } from "./SignInOptionSelector";
 import { login } from "@/app/lib/api/auth";
 import { useActionState } from "react";
 
-interface props {
-  accountType: "user" | "shop";
-}
-
-export function LoginForm({ accountType }: props) {
-  const [state, formAction] = useActionState(login, {
-    error: null,
-  });
+// TODO: merge to path together (usersignin and shopsignin) and add role selector as a form
+export function LoginForm() {
+  const [state, formAction] = useActionState<
+    { error: string | null },
+    FormData
+  >(login, { error: null });
   return (
     <div className="md:w-1/3 bg-[#2B2B2B] h-full flex flex-col justify-center px-16">
       <h3 className="text-center text-2xl font-semibold text-[#EEF2F6] mb-3">
         Welcome
       </h3>
       <form className="flex flex-col gap-4" action={formAction}>
-        <SignInOptionsSelector selectedOption={accountType} />
+        <AccountTypePicker />
         <input
           type="email"
           id="email"

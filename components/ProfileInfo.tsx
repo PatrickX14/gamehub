@@ -6,7 +6,7 @@ import WcOutlinedIcon from "@mui/icons-material/WcOutlined";
 // import { useRouter } from "next/navigation";
 import { SectionCard } from "./Cards";
 import Link from "next/link";
-import AddIcon from "@mui/icons-material/Add";
+import { Settings } from "@mui/icons-material";
 
 interface ProfileInfoProps {
   name: string;
@@ -66,10 +66,10 @@ export function ProfileInfo({
         />
         <div className="flex justify-end">
           <Link
-            href={`/profile/`}
+            href={`/profile/edit`}
             className="flex items-center bg-[#FACC14] hover:bg-[#E7B008]/80 px-4 py-2 rounded-md "
           >
-            <AddIcon />
+            <Settings />
             Edit
           </Link>
         </div>
@@ -87,7 +87,7 @@ type FieldProps = {
   type?: string;
 };
 
-function Field({
+export function Field({
   icon,
   label,
   isEditing,
@@ -97,7 +97,7 @@ function Field({
 }: FieldProps) {
   return (
     <div className="flex items-start gap-4">
-      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#364049]/10 flex items-center justify-center text-[#364049] mt-2">
+      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#364049]/10 flex items-center justify-center text-[#364049] mt-2 shadow-md">
         {icon}
       </div>
       <div className="flex-1">

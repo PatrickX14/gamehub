@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { Settings } from "@mui/icons-material";
+
 export function AdminContactSetting() {
   return (
     <div className="grid grid-cols-2">
@@ -99,6 +102,15 @@ export function BusinessHours() {
           </div>
         );
       })}
+      <div className="flex justify-end">
+        <Link
+          href={`/profile/`}
+          className="flex items-center bg-[#FACC14] hover:bg-[#E7B008]/80 px-4 py-2 rounded-md "
+        >
+          <Settings />
+          Edit
+        </Link>
+      </div>
     </div>
   );
 }

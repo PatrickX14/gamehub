@@ -1,4 +1,4 @@
-import { UserSignupForm } from "@/components/UserSignupForm";
+import { SignupForm } from "@/components/SignupForm";
 import Image from "next/image";
 
 export default async function UserSigninPage() {
@@ -87,7 +87,7 @@ export default async function UserSigninPage() {
       </div>
 
       {/* Form */}
-      <UserSignupForm />
+      <SignupForm />
     </div>
   );
 }

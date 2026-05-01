@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { LoginForm } from "@/components/LoginForm";
 
-export default function SigninPage() {
+export default function LoginInPage() {
   return (
     <div className="flex h-full">
       {/* Images Section */}
@@ -87,7 +87,7 @@ export default function SigninPage() {
       </div>
 
       {/* Login Form */}
-      <LoginForm accountType={"user"} />
+      <LoginForm />
     </div>
   );
 }

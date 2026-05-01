@@ -5,7 +5,7 @@ import { api } from "@/app/lib/axios";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-export function UserSignupForm() {
+export function SignupForm() {
   const router = useRouter();
   async function loginAction(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
