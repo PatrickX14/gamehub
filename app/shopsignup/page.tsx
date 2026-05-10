@@ -1,7 +1,32 @@
-import { AccountTypePicker } from "@/components/SignInOptionSelector";
+"use client";
+import { SignupOptionsSelector } from "@/components/signupOptionsSelector";
 import Image from "next/image";
+import { register } from "../lib/api/auth";
+import type { RegisterPayload } from "../lib/api/auth";
+import { useRouter } from "next/navigation";
 
 export default function ShopSigninPage() {
+  const router = useRouter();
+  async function onSubmit(event: React.SubmitEvent) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const emailField = formData.get("email");
+    const nameField = formData.get("name");
+    const phoneNumberField = formData.get("phoneNumber");
+    const passwordField = formData.get("password");
+    if (!passwordField || typeof passwordField != "string") return;
+    const payload: RegisterPayload = {
+      email: typeof emailField === "string" ? emailField : "",
+      name: typeof nameField === "string" ? nameField : "",
+      phoneNumber: typeof phoneNumberField === "string" ? phoneNumberField : "",
+      password: passwordField,
+    };
+    const res = await register("SHOP", payload);
+
+    if (!res.error) {
+      router.replace("/login");
+    }
+  }
   return (
     <div className="flex h-full">
       {/* Images Section */}
@@ -94,13 +119,21 @@ export default function ShopSigninPage() {
         <p className="text-center text-[#94A3B8] mb-3">
           Choose your account type to get started
         </p>
-        <form className="flex flex-col gap-4 ">
-          <AccountTypePicker />
+        <form className="flex flex-col gap-4" onSubmit={onSubmit}>
+          <SignupOptionsSelector selectedOption="shop" />
           <input
             type="text"
             id="name"
             name="name"
             placeholder="Shop name"
+            required
+            className="bg-[#EEF2F6] py-3 px-2 rounded-lg"
+          />
+          <input
+            type="text"
+            id="phoneNumber"
+            name="phoneNumber"
+            placeholder="Phone number"
             required
             className="bg-[#EEF2F6] py-3 px-2 rounded-lg"
           />

@@ -13,6 +13,7 @@ const menus = [
     title: "Profile",
     link: "/profile",
   },
+  { link: "/cart", title: "Cart" },
   {
     title: "Purchase",
     link: "/purchase",

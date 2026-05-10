@@ -1,7 +1,7 @@
-import { SignupForm } from "@/components/SignupForm";
+import { UserSignupForm } from "@/components/SignupForm";
 import Image from "next/image";
 
-export default async function UserSigninPage() {
+export default function UserSignUpPage() {
   return (
     <div className="flex h-full">
       {/* Images Section */}
@@ -87,7 +87,7 @@ export default async function UserSigninPage() {
       </div>
 
       {/* Form */}
-      <SignupForm />
+      <UserSignupForm />
     </div>
   );
 }

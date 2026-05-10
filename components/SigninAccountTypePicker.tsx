@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-export function AccountTypePicker() {
+export function SigninAccountTypePicker() {
   const [selected, setSelected] = useState("USER");
 
   const options = [

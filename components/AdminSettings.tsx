@@ -62,7 +62,7 @@ export function BusinessHours() {
                 {day}
               </span>
               <span
-                className="w-15 h-6 text-center rounded-full text-white text-sm/6"
+                className="w-18 h-6 text-center rounded-full text-white text-sm/6"
                 style={
                   isOpen
                     ? {

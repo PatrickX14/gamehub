@@ -1,7 +1,7 @@
 import { UserHeader } from "@/components/userheader";
 import { ReactNode } from "react";
 
-export default function UserLayout({
+export default async function UserLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
   return (

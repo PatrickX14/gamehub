@@ -17,6 +17,7 @@ interface EditFormProps {
   district?: string;
   province?: string;
   postalCode?: string;
+  adminMode?: boolean;
 }
 
 export function UserEditAddressForm({
@@ -32,6 +33,7 @@ export function UserEditAddressForm({
   district,
   province,
   postalCode,
+  adminMode,
 }: EditFormProps) {
   const [state, formAction, isPending] = useActionState(updateAddress, {
     error: null,
@@ -54,24 +56,28 @@ export function UserEditAddressForm({
         action={formAction}
       >
         {id && <input type="hidden" name="addressId" value={String(id)} />}
-        <TextInput
-          name={"name"}
-          label={"Address Label*"}
-          required
-          defaultValue={name}
-        />
-        <TextInput
-          name={"receiverName"}
-          label={"Receiver Name*"}
-          required
-          defaultValue={receiverName}
-        />
-        <TextInput
-          name={"phoneNumber"}
-          label={"Phone Number*"}
-          required
-          defaultValue={phoneNumber}
-        />
+        {adminMode ? null : (
+          <>
+            <TextInput
+              name={"name"}
+              label={"Address Label*"}
+              required
+              defaultValue={name}
+            />
+            <TextInput
+              name={"receiverName"}
+              label={"Receiver Name*"}
+              required
+              defaultValue={receiverName}
+            />
+            <TextInput
+              name={"phoneNumber"}
+              label={"Phone Number*"}
+              required
+              defaultValue={phoneNumber}
+            />
+          </>
+        )}
         <TextInput
           name={"houseNumber"}
           label={"House Number*"}

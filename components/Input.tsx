@@ -20,7 +20,9 @@ interface TextInputProps extends Omit<InputBaseProps, "children"> {
   name: string;
   defaultValue?: string | number;
   required?: boolean;
+  disabled?: boolean;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  number?: boolean;
 }
 
 export function TextInput({
@@ -29,6 +31,8 @@ export function TextInput({
   required,
   defaultValue,
   onChange,
+  disabled,
+  number,
 }: TextInputProps) {
   return (
     <InputBase label={label}>
@@ -38,6 +42,8 @@ export function TextInput({
         name={name}
         defaultValue={defaultValue ? defaultValue : undefined}
         onChange={onChange}
+        disabled={disabled}
+        type={number ? "number" : "text"}
       />
     </InputBase>
   );
@@ -46,9 +52,15 @@ export function TextInput({
 interface EmailInputProps extends Omit<InputBaseProps, "children"> {
   defaultValue?: string;
   required?: boolean;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
-export function EmailInput({ label, required, defaultValue }: EmailInputProps) {
+export function EmailInput({
+  label,
+  required,
+  defaultValue,
+  onChange,
+}: EmailInputProps) {
   return (
     <InputBase label={label}>
       <input
@@ -57,6 +69,7 @@ export function EmailInput({ label, required, defaultValue }: EmailInputProps) {
         name={"email"}
         defaultValue={defaultValue ? defaultValue : undefined}
         type="email"
+        onChange={onChange}
       />
     </InputBase>
   );
@@ -167,20 +180,16 @@ export function ImagesUpload({ onChange }: ImagesUploadProps) {
       file,
       url: URL.createObjectURL(file),
     }));
-    setImages((prev) => {
-      const merged = [...prev, ...withUrl];
-      onChange?.(merged.map((i) => i.file));
-      return merged;
-    });
+    const nextImages = [...images, ...withUrl];
+    setImages(nextImages);
+    onChange?.(nextImages.map((i) => i.file));
   }
 
   function removeImage(index: number) {
-    setImages((prev) => {
-      URL.revokeObjectURL(prev[index].url);
-      const next = prev.filter((_, i) => i !== index);
-      onChange?.(next.map((i) => i.file));
-      return next;
-    });
+    URL.revokeObjectURL(images[index].url);
+    const next = images.filter((_, i) => i !== index);
+    setImages(next);
+    onChange?.(next.map((i) => i.file));
   }
 
   function handleDragOver(e: React.DragEvent) {

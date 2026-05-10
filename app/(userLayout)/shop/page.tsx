@@ -3,81 +3,9 @@ import { useState, useRef, useEffect } from "react";
 import TuneIcon from "@mui/icons-material/Tune";
 import { SearchbarWithIcon } from "@/components/searchbarWithIcon";
 import { StoreProductCard } from "@/components/storeProductCard";
-
-const demoProducts = [
-  {
-    productImageUrl:
-      "/images/demoimages/products/99550101476_RavenGuardMorDeythanStrikeSquad01.jpg",
-    productName: "Mor Deythan Squad",
-    storeImageUrl: "/images/demoimages/legendarywargame.png",
-    storeName: "Legendary Wargame",
-    price: 2700,
-  },
-  {
-    productImageUrl:
-      "/images/demoimages/products/99550101476_RavenGuardMorDeythanStrikeSquad01.jpg",
-    productName: "Mor Deythan Squad",
-    storeImageUrl: "/images/demoimages/legendarywargame.png",
-    storeName: "Legendary Wargame",
-    price: 2700,
-  },
-  {
-    productImageUrl:
-      "/images/demoimages/products/99550101476_RavenGuardMorDeythanStrikeSquad01.jpg",
-    productName: "Mor Deythan Squad",
-    storeImageUrl: "/images/demoimages/legendarywargame.png",
-    storeName: "Legendary Wargame",
-    price: 2700,
-  },
-  {
-    productImageUrl:
-      "/images/demoimages/products/99550101476_RavenGuardMorDeythanStrikeSquad01.jpg",
-    productName: "Mor Deythan Squad",
-    storeImageUrl: "/images/demoimages/legendarywargame.png",
-    storeName: "Legendary Wargame",
-    price: 2700,
-  },
-  {
-    productImageUrl:
-      "/images/demoimages/products/99550101476_RavenGuardMorDeythanStrikeSquad01.jpg",
-    productName: "Mor Deythan Squad",
-    storeImageUrl: "/images/demoimages/legendarywargame.png",
-    storeName: "Legendary Wargame",
-    price: 2700,
-  },
-  {
-    productImageUrl:
-      "/images/demoimages/products/99550101476_RavenGuardMorDeythanStrikeSquad01.jpg",
-    productName: "Mor Deythan Squad",
-    storeImageUrl: "/images/demoimages/legendarywargame.png",
-    storeName: "Legendary Wargame",
-    price: 2700,
-  },
-  {
-    productImageUrl:
-      "/images/demoimages/products/99550101476_RavenGuardMorDeythanStrikeSquad01.jpg",
-    productName: "Mor Deythan Squad",
-    storeImageUrl: "/images/demoimages/legendarywargame.png",
-    storeName: "Legendary Wargame",
-    price: 2700,
-  },
-  {
-    productImageUrl:
-      "/images/demoimages/products/99550101476_RavenGuardMorDeythanStrikeSquad01.jpg",
-    productName: "Mor Deythan Squad",
-    storeImageUrl: "/images/demoimages/legendarywargame.png",
-    storeName: "Legendary Wargame",
-    price: 2700,
-  },
-  {
-    productImageUrl:
-      "/images/demoimages/products/99550101476_RavenGuardMorDeythanStrikeSquad01.jpg",
-    productName: "Mor Deythan Squad",
-    storeImageUrl: "/images/demoimages/legendarywargame.png",
-    storeName: "Legendary Wargame",
-    price: 2700,
-  },
-];
+import { getLocalStorageItem } from "@/app/lib/api/utils";
+import { userGetProducts } from "@/app/lib/api/users/products";
+import { ProductData } from "@/app/lib/api/users/products";
 
 const FILTERS = ["Gathering", "Booked", "Full", "In Progress", "Completed"];
 
@@ -85,13 +13,24 @@ export default function StorePage() {
   const [filterOpen, setFilterOpen] = useState(false);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const filterRef = useRef<HTMLDivElement>(null);
+  const [productData, setProductData] = useState<ProductData[]>([]);
 
   useEffect(() => {
+    // Fecth products
+    async function getProducts() {
+      const accessToken = await getLocalStorageItem("accessToken");
+      if (!accessToken) return;
+      const products = await userGetProducts(accessToken);
+      setProductData(products.items);
+    }
+
+    // Handle filter clicks
     function handleClickOutside(e: MouseEvent) {
       if (filterRef.current && !filterRef.current.contains(e.target as Node)) {
         setFilterOpen(false);
       }
     }
+    getProducts();
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -103,6 +42,7 @@ export default function StorePage() {
         : [...prev, filter],
     );
   }
+
   return (
     <section className="px-30">
       <section className="mb-6">
@@ -178,11 +118,21 @@ export default function StorePage() {
       </div>
 
       {/* products */}
-      <p>Showing 1-10 of (15) results</p>
+      {/* <p>Showing 1-10 of (15) results</p> */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-12 py-3">
-        {demoProducts.map((data, index) => (
-          <StoreProductCard productId={index} key={index} {...data} />
-        ))}
+        {!productData || productData.length > 0
+          ? productData?.map(({ id, images, price, shopName, name }) => (
+              <StoreProductCard
+                productId={id}
+                key={id}
+                productImageUrl={images[0]}
+                productName={name}
+                storeImageUrl={"/images/demoimages/legendarywargame.png"}
+                storeName={shopName}
+                price={+price}
+              />
+            ))
+          : null}
       </div>
     </section>
   );

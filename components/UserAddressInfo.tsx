@@ -5,9 +5,13 @@ import { SectionCard } from "./Cards";
 
 interface AddressSectionProps {
   addressData: AddressBody[];
+  adminMode?: boolean;
 }
 
-export function AddressSection({ addressData }: AddressSectionProps) {
+export function AddressSection({
+  addressData,
+  adminMode,
+}: AddressSectionProps) {
   return (
     <SectionCard title={"Address"} description={"Manage your addresses"}>
       {/* Address details */}
@@ -40,6 +44,7 @@ export function AddressSection({ addressData }: AddressSectionProps) {
                     phoneNumber={phoneNumber}
                     address={firstLineAddress}
                     secondLineAddress={secondLineAddress}
+                    adminMode={adminMode}
                   />
                 );
               },
@@ -52,15 +57,30 @@ export function AddressSection({ addressData }: AddressSectionProps) {
         )}
       </div>
       {/* Add new address button */}
-      <div className="flex justify-center mb-4">
-        <Link
-          href={"/profile/newaddress"}
-          className="flex items-center bg-[#FACC14] hover:bg-[#E7B008]/80 px-4 py-2 rounded-md "
-        >
-          <AddIcon />
-          Add new address
-        </Link>
-      </div>
+
+      {adminMode ? (
+        addressData.length > 0 ? null : (
+          <div className="flex justify-center mb-4">
+            <Link
+              href={"/admin/address/new"}
+              className="flex items-center bg-[#FACC14] hover:bg-[#E7B008]/80 px-4 py-2 rounded-md "
+            >
+              <AddIcon />
+              Add new address
+            </Link>
+          </div>
+        )
+      ) : (
+        <div className="flex justify-center mb-4">
+          <Link
+            href={"/profile/newaddress"}
+            className="flex items-center bg-[#FACC14] hover:bg-[#E7B008]/80 px-4 py-2 rounded-md "
+          >
+            <AddIcon />
+            Add new address
+          </Link>
+        </div>
+      )}
     </SectionCard>
   );
 }
@@ -72,6 +92,7 @@ interface AddressCardProps {
   phoneNumber: string;
   address: string;
   secondLineAddress: string;
+  adminMode?: boolean;
 }
 
 function AddressCard({
@@ -81,27 +102,46 @@ function AddressCard({
   name,
   phoneNumber,
   secondLineAddress,
+  adminMode,
 }: AddressCardProps) {
   return (
     <div className="flex">
       {/* details */}
       <div className="flex-1">
-        <p className="text-xl text-primary font-bold">{addressLabel}</p>
-        <p className="my-2 text-primary">
-          {name} | {phoneNumber}
+        {adminMode ? null : (
+          <>
+            <p className="text-xl text-primary font-bold">{addressLabel}</p>
+            <p className="my-2 text-primary">
+              {name} | {phoneNumber}
+            </p>
+          </>
+        )}
+        <p className={`${adminMode ? "text-primary" : "text-secondary"}`}>
+          {address}
         </p>
-        <p className="text-secondary">{address}</p>
-        <p className="text-secondary">{secondLineAddress}</p>
+        <p className={`${adminMode ? "text-primary" : "text-secondary"}`}>
+          {secondLineAddress}
+        </p>
       </div>
       {/* edit button */}
       <div className="flex items-center mb-4">
-        <Link
-          href={`/profile/address/${id}`}
-          className="flex items-center bg-[#FACC14] hover:bg-[#E7B008]/80 px-4 py-2 rounded-md "
-        >
-          <AddIcon />
-          Edit
-        </Link>
+        {adminMode ? (
+          <Link
+            href={`/admin/shopinfo/address/${id}`}
+            className="flex items-center bg-[#FACC14] hover:bg-[#E7B008]/80 px-4 py-2 rounded-md "
+          >
+            <AddIcon />
+            Edit
+          </Link>
+        ) : (
+          <Link
+            href={`/profile/address/${id}`}
+            className="flex items-center bg-[#FACC14] hover:bg-[#E7B008]/80 px-4 py-2 rounded-md "
+          >
+            <AddIcon />
+            Edit
+          </Link>
+        )}
       </div>
     </div>
   );

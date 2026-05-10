@@ -50,15 +50,18 @@ export async function getMe(
   return data;
 }
 
-export async function getAvatar() {
+export async function getAvatar(): Promise<{
+  message: string;
+  imageUrl: string;
+}> {
   const accessToken = await getLocalStorageItem("accessToken");
-  if (!accessToken) return;
+  if (!accessToken) throw new Error("No access token found");
   const res = await fetch(`${API_URL}/users/avatar`, {
     headers: {
       authorization: `Bearer ${accessToken}`,
     },
   });
-  if (!res.ok) return null;
+  if (!res.ok) throw new Error(`Failed to fetch avatar: ${res.status}`);
   return await res.json();
 }
 
@@ -145,7 +148,7 @@ export async function updateAddress(
     throw new Error("Missing addressId for updateAddress");
   }
 
-  const name = formData.get("name");
+  const name = formData.get("name") ?? "";
   const receiverName = formData.get("receiverName") ?? "";
   const phoneNumber = formData.get("phoneNumber") ?? "";
   const houseNumber = formData.get("houseNumber") ?? "";
@@ -156,6 +159,8 @@ export async function updateAddress(
   const district = formData.get("district") ?? "";
   const province = formData.get("province") ?? "";
   const postalCode = formData.get("postalCode") ?? "";
+
+  console.log(phoneNumber);
 
   const res = await fetch(`${API_URL}/users/address/${addressId}`, {
     method: "PATCH",
@@ -186,6 +191,7 @@ export async function updateAddress(
   }
 
   if (!res.ok) {
+    console.log(await res.json());
     throw new Error(`Failed to update address: ${res.status}`);
   }
 

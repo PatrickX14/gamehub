@@ -1,27 +1,33 @@
 "use client";
-import { FormEvent } from "react";
 import { SignupOptionsSelector } from "./signupOptionsSelector";
-import { api } from "@/app/lib/axios";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { register, RegisterPayload } from "@/app/lib/api/auth";
 
-export function SignupForm() {
+export function UserSignupForm() {
   const router = useRouter();
-  async function loginAction(event: FormEvent<HTMLFormElement>) {
+  async function onSubmit(event: React.SubmitEvent) {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    try {
-      await api.post("/auth/register", {
-        email: formData.get("email"),
-        password: formData.get("password"),
-        firstName: formData.get("firstName"),
-        lastName: formData.get("lastName"),
-        gender: formData.get("gender"),
-        phoneNumber: formData.get("phoneNumber"),
-      });
-      router.replace("/signin");
-    } catch (err) {
-      console.log(err);
+    const formData = new FormData(event.target);
+    const emailField = formData.get("email");
+    const nameField = formData.get("name");
+    const lastNameField = formData.get("lastName");
+    const phoneNumberField = formData.get("phoneNumber");
+    const passwordField = formData.get("password");
+    const genderField = formData.get("gender");
+    if (!passwordField || typeof passwordField != "string") return;
+    const payload: RegisterPayload = {
+      email: typeof emailField === "string" ? emailField : "",
+      name: typeof nameField === "string" ? nameField : "",
+      lastName: typeof lastNameField === "string" ? lastNameField : "",
+      phoneNumber: typeof phoneNumberField === "string" ? phoneNumberField : "",
+      password: passwordField,
+      gender: typeof genderField === "string" ? genderField : "",
+    };
+    const res = await register("USER", payload);
+
+    if (!res.error) {
+      router.replace("/login");
     }
   }
 
@@ -34,12 +40,12 @@ export function SignupForm() {
         Choose your account type to get started
       </p>
 
-      <form className="flex flex-col gap-4 " onSubmit={loginAction}>
+      <form className="flex flex-col gap-4 " onSubmit={onSubmit}>
         <SignupOptionsSelector selectedOption={"user"} />
         <input
           type="text"
-          id="firstName"
-          name="firstName"
+          id="name"
+          name="name"
           placeholder="First name"
           required
           className="bg-[#EEF2F6] py-3 px-2 rounded-lg"

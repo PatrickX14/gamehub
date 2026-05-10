@@ -40,3 +40,40 @@ export async function login(
 
   return { error: null };
 }
+
+type UserGender = "MALE" | "FEMALE" | "OTHER";
+
+export type RegisterPayload = {
+  email: string;
+  password: string;
+  name: string;
+  phoneNumber: string;
+  lastName?: string;
+  gender?: string;
+};
+
+type RegisterRole = "USER" | "SHOP";
+
+export async function register(role: RegisterRole, payload: RegisterPayload) {
+  const res = await fetch(`${API_URL}/auth/register`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      ...payload,
+      role,
+      lastName: payload.lastName || undefined,
+      gender: payload.gender || undefined,
+    }),
+  });
+
+  const data = await res.json();
+  console.log(data);
+
+  if (!res.ok) {
+    return { error: (data.message as string) || "Registration failed" };
+  }
+
+  return { error: null };
+}

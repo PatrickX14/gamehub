@@ -66,7 +66,7 @@ export function ProfileInfo({
         />
         <div className="flex justify-end">
           <Link
-            href={`/profile/edit`}
+            href={adminMode ? "/admin/shopinfo/edit" : "/profile/edit"}
             className="flex items-center bg-[#FACC14] hover:bg-[#E7B008]/80 px-4 py-2 rounded-md "
           >
             <Settings />

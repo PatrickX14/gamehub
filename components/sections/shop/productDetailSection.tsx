@@ -4,10 +4,15 @@ import Image from "next/image";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
+import { notification } from "antd";
+import { userAddToCart } from "@/app/lib/api/users/cart";
+import { getLocalStorageItem } from "@/app/lib/api/utils";
+import { ShoppingCartOutlined } from "@mui/icons-material";
 
 interface props {
+  productId: number;
   productName: string;
-  price: number;
+  price: number | string;
   description: string;
   tags: string[];
   shopImageUrl: string;
@@ -21,14 +26,48 @@ export function ProductDetailSection({
   shopImageUrl,
   shopName,
   tags,
+  productId,
 }: props) {
   const [quantity, setQuantity] = useState<number>(1);
+  const [api, contextHolder] = notification.useNotification();
+
+  async function handleAddToCart(productId: number) {
+    const accessToken = await getLocalStorageItem("accessToken");
+    if (!accessToken) {
+      api.error({
+        title: "Invalid credentials",
+        description: `Invalid credentials`,
+        placement: "topRight",
+        showProgress: true,
+        pauseOnHover: true,
+      });
+      return;
+    }
+    const res = await userAddToCart(accessToken, productId, quantity);
+    if (!res.ok) {
+      api.error({
+        title: "Error",
+        description: `Something went wrong`,
+        placement: "topRight",
+        showProgress: true,
+        pauseOnHover: true,
+      });
+      return;
+    }
+    api.info({
+      title: "Notification",
+      description: `Added ${quantity} ${productName} to your cart`,
+      placement: "topRight",
+      showProgress: true,
+      pauseOnHover: true,
+      icon: <ShoppingCartOutlined style={{ color: "#FACC14" }} />,
+    });
+  }
 
   return (
     <div className="bg-[#F9FAFB] border border-black/20 shadow-md px-5 lg:px-10 py-12">
-      <h1 className="text-3xl font-semibold text-primary">
-        {productName}
-      </h1>
+      {contextHolder}
+      <h1 className="text-3xl font-semibold text-primary">{productName}</h1>
       <h3 className="text-2xl font-bold mb-5 text-primary">
         ฿ {price.toLocaleString()}
       </h3>
@@ -79,7 +118,10 @@ export function ProductDetailSection({
           </button>
         </div>
 
-        <button className="bg-[#FCCB1D] gap-2 justify-center rounded-md lg:px-20 py-3 flex items-center cursor-pointer shadow-md">
+        <button
+          className="bg-[#FCCB1D] gap-2 justify-center rounded-md lg:px-20 py-3 flex items-center cursor-pointer shadow-md"
+          onClick={() => handleAddToCart(productId)}
+        >
           <ShoppingBasketIcon className="text-primary" />
           <p className="text-primary">Add to cart</p>
         </button>

@@ -1,7 +1,9 @@
 "use client";
 import { useState } from "react";
-import { GameReservationCard } from "@/components/gameReservationCard";
+import { GameReservationCard } from "@/components/GameReservationCard";
 import { ShopReservationCard } from "@/components/shopReservationCard";
+import { Switch, SwitchProps } from "antd";
+import { createStyles } from "antd-style";
 
 const demoGameCards = [
   {
@@ -51,6 +53,7 @@ const demoGameCards = [
     duration: "30 min",
   },
 ];
+
 const demoShopCards = [
   {
     shopName: "Legendary Wargame",
@@ -101,15 +104,21 @@ const demoShopCards = [
   },
 ];
 
+const useStyle = createStyles(({ token }) => ({
+  root: {
+    width: 40,
+    backgroundColor: token.colorPrimary,
+  },
+}));
+
 export function ReservationCardsSection() {
-  const [isInputEnable, setInputEnable] = useState<boolean>(false);
+  const [isShopFirst, setFirstSelection] = useState<boolean>(false);
   const [selectedCard, setSelectedCard] = useState<string>("");
   const [selectedShop, setSelectedShop] = useState<string>("");
   const [shops, setShops] = useState<typeof demoShopCards>(demoShopCards);
 
   function handleGameSelect(gameName: string) {
     setSelectedCard(gameName);
-    setInputEnable(true);
   }
 
   function handleShopSearch(shopName: string) {
@@ -117,121 +126,137 @@ export function ReservationCardsSection() {
       setShops(demoShopCards);
       return;
     }
-
     const filteredShops = demoShopCards.filter((card) =>
       card.shopName.toLowerCase().includes(shopName.trim().toLowerCase()),
     );
-
     setShops(filteredShops);
   }
 
-  function handleShopSeclect(shopName: string, isOpen: boolean) {
-    if (!isOpen) {
-      return;
-    }
-    setSelectedShop(shopName);
+  function onSwitchCheck(checked: boolean) {
+    setFirstSelection(checked);
   }
 
-  return (
-    <section className="px-10 xl:px-30">
-      {/* choose game */}
+  const stylesFn: SwitchProps["styles"] = (info) => {
+    if (info.props.size === "medium") {
+      return {
+        root: { backgroundColor: "#FACC14" },
+      } satisfies SwitchProps["styles"];
+    }
+    return {};
+  };
+
+  const { styles: classNames } = useStyle();
+
+  const gameSection = (
+    <>
+      <div className="w-full my-7">
+        <input
+          className="bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14] w-full"
+          placeholder="Search board games..."
+          type="text"
+        />
+      </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-12 mb-12">
         {demoGameCards.map(
-          ({ gameName, description, duration, imageUrl, players }, index) => (
+          ({ gameName, description, duration, players }, index) => (
             <GameReservationCard
               key={index}
               gameName={gameName}
               description={description}
               players={players}
               duration={duration}
-              imageUrl={imageUrl}
               onClick={() => handleGameSelect(gameName)}
-              isSelected={selectedCard == gameName ? true : false}
+              isSelected={selectedCard === gameName}
             />
           ),
         )}
       </div>
-      {/* details input */}
-      <div className="bg-[#F9FAFB] rounded-2xl shadow-xl px-6 md:px-20 py-6">
-        <h1 className="text-[#364049] text-center font-bold text-4xl">
-          Reservation Form
-        </h1>
-        {/* inputs */}
-        <form className="grid grid-cols-1 sm:grid-cols-2 gap-6  mt-6">
-          <input
-            className={`bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]
-              ${isInputEnable ? "" : "cursor-not-allowed"}
-              `}
-            placeholder="Enter your name"
-            disabled={isInputEnable ? false : true}
-          />
-          <input
-            className={`bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]
-              ${isInputEnable ? "" : "cursor-not-allowed"}
-              `}
-            placeholder="your@email.com"
-            type="email"
-            disabled={isInputEnable ? false : true}
-          />
-          <input
-            className={`bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]
-              ${isInputEnable ? "" : "cursor-not-allowed"}
-              `}
-            // placeholder="dd/mm/yyyy"
-            type="date"
-            disabled={isInputEnable ? false : true}
-          />
-          <input
-            className={`bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]
-              ${isInputEnable ? "" : "cursor-not-allowed"}
-              `}
-            placeholder="Select palyers"
-            type="number"
-            disabled={isInputEnable ? false : true}
-          />
-          <input
-            className={`bg-[#EEF2F6] md:col-span-2 ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]
-              ${isInputEnable ? "" : "cursor-not-allowed"}
-              `}
-            placeholder="Search locations by name"
-            type="search"
-            disabled={isInputEnable ? false : true}
-            onChange={(e) => handleShopSearch(e.target.value)}
-          />
-          <select
-            className={`bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]
-              ${isInputEnable ? "" : "cursor-not-allowed"}
-              `}
-            disabled={isInputEnable ? false : true}
-          >
-            <option>All Provinces</option>
-            <option>Bangkok</option>
-            <option>Nonthaburi</option>
-          </select>
-          <input
-            className={`bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]
-              ${isInputEnable ? "" : "cursor-not-allowed"}
-              `}
-            type="time"
-            disabled={isInputEnable ? false : true}
-          />
-        </form>
+    </>
+  );
 
-        {/* shop selection */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-          {shops.map((card, index) => (
-            <ShopReservationCard
-              key={index}
-              {...card}
-              isSelected={selectedShop == card.shopName ? true : false}
-              onClick={() => handleShopSeclect(card.shopName, card.isOpen)}
-            />
-          ))}
-        </div>
-        <button className="bg-[#FACC14] hover:bg-[#EAB80B] shadow-xl block text-gray-900 font-semibold rounded-md mt-6 mx-auto transition-colors cursor-pointer py-3 px-10">
-          Reserve
-        </button>
+  const shopSection = (
+    <>
+      <div className="w-full my-7">
+        <input
+          className="bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14] w-full"
+          placeholder="Search board games..."
+          type="text"
+        />
       </div>
-    </section>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6 mb-6">
+        {shops.map((card, index) => (
+          <ShopReservationCard
+            key={index}
+            {...card}
+            isSelected={selectedShop === card.shopName}
+            onClick={() => setSelectedShop(card.shopName)}
+          />
+        ))}
+      </div>
+    </>
+  );
+
+  return (
+    <div className="bg-[#F9FAFB] rounded-2xl shadow-xl px-6 md:px-20 py-6">
+      {/* Switch selection mode */}
+      <div className="mb-7 flex justify-center items-center gap-4">
+        <p
+          className={`w-50 text-right font-medium transition-colors duration-200 ${
+            !isShopFirst ? "text-[#FACC14]" : "text-gray-400"
+          }`}
+        >
+          Boardgame First
+        </p>
+        <Switch
+          size="medium"
+          classNames={classNames}
+          styles={stylesFn}
+          onClick={onSwitchCheck}
+        />
+        <p
+          className={`w-50 text-left font-medium transition-colors duration-200 ${
+            isShopFirst ? "text-[#FACC14]" : "text-gray-400"
+          }`}
+        >
+          Shop First
+        </p>
+      </div>
+
+      {/* First section */}
+      {isShopFirst ? shopSection : gameSection}
+
+      {/* Inputs */}
+      <form className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
+        <div className="grid grid-cols-2 gap-6">
+          <input
+            className={`bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14] `}
+            type="date"
+          />
+          <input
+            className={`bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14] `}
+            type="time"
+          />
+        </div>
+        <input
+          className={`bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]`}
+          placeholder="Select players"
+          type="number"
+        />
+        <select
+          className={`col-span-full bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]`}
+        >
+          <option>All Provinces</option>
+          <option>Bangkok</option>
+          <option>Nonthaburi</option>
+        </select>
+      </form>
+
+      {/* Second section */}
+      {isShopFirst ? gameSection : shopSection}
+
+      <button className="bg-[#FACC14] hover:bg-[#EAB80B] shadow-xl block text-gray-900 font-semibold rounded-md mt-6 mx-auto transition-colors cursor-pointer py-3 px-10">
+        Reserve
+      </button>
+    </div>
   );
 }

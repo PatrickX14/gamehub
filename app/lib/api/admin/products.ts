@@ -29,6 +29,7 @@ export interface CreateProductPayload {
 export async function createProduct(
   accessToken: string,
   payload: CreateProductPayload,
+  imageIds: number[],
   retry: number = 0,
 ): Promise<ProductData> {
   if (!accessToken) {
@@ -41,11 +42,11 @@ export async function createProduct(
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({ ...payload, imageIds }),
     });
     if (!res.ok && retry < 1) {
       return await refreshToken(() =>
-        createProduct(accessToken, payload, retry + 1),
+        createProduct(accessToken, payload, imageIds, retry + 1),
       );
     }
     if (!res.ok) {
@@ -125,6 +126,36 @@ export async function getProducts(
     return data;
   } catch (err) {
     console.error("Failed to fetch products:", err);
+    throw err;
+  }
+}
+
+export async function deleteProduct(
+  accessToken: string,
+  productId: number | string,
+  retry: number = 0,
+): Promise<void> {
+  if (!accessToken) {
+    throw new Error("Access token is missing");
+  }
+  try {
+    const res = await fetch(`${API_URL}/admin/products/${productId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    if (!res.ok && retry < 1) {
+      return await refreshToken(() =>
+        deleteProduct(accessToken, productId, retry + 1),
+      );
+    }
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData?.message ?? "Failed to delete product");
+    }
+  } catch (err) {
+    console.error("Failed to delete product:", err);
     throw err;
   }
 }

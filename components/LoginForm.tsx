@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { AccountTypePicker } from "./SignInOptionSelector";
+import { SigninAccountTypePicker } from "./SigninAccountTypePicker";
 import { login } from "@/app/lib/api/auth";
 import { useActionState } from "react";
 
@@ -16,7 +16,7 @@ export function LoginForm() {
         Welcome
       </h3>
       <form className="flex flex-col gap-4" action={formAction}>
-        <AccountTypePicker />
+        <SigninAccountTypePicker />
         <input
           type="email"
           id="email"

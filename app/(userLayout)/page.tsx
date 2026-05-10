@@ -13,7 +13,9 @@ export default function Home() {
           time with friends and family
         </p>
       </section>
-      <ReservationCardsSection />
+      <section className="px-10 xl:px-30">
+        <ReservationCardsSection />
+      </section>
     </div>
   );
 }

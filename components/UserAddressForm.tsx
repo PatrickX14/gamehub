@@ -4,7 +4,11 @@ import EditIcon from "@mui/icons-material/Edit";
 import { useActionState } from "react";
 import { postAddress } from "@/app/lib/api/user";
 
-export function UserAddressForm() {
+type NewAddressFormProps = {
+  adminMode?: boolean;
+};
+
+export function UserAddressForm({ adminMode }: NewAddressFormProps) {
   const [state, formAction] = useActionState(postAddress, {
     error: null,
   });
@@ -27,9 +31,17 @@ export function UserAddressForm() {
         className="px-6 py-6 grid grid-cols-2 gap-y-2 gap-x-3"
         action={formAction}
       >
-        <TextInput name={"name"} label={"Address Label*"} required />
-        <TextInput name={"receiverName"} label={"Receiver Name*"} required />
-        <TextInput name={"phoneNumber"} label={"Phone Number*"} required />
+        {adminMode ? null : (
+          <>
+            <TextInput name={"name"} label={"Address Label*"} required />
+            <TextInput
+              name={"receiverName"}
+              label={"Receiver Name*"}
+              required
+            />
+            <TextInput name={"phoneNumber"} label={"Phone Number*"} required />
+          </>
+        )}
         <TextInput name={"houseNumber"} label={"House Number*"} required />
         <TextInput name={"soi"} label={"Soi"} />
         <TextInput name={"road"} label={"Road*"} required />

@@ -1,14 +1,56 @@
+"use client";
 import Image from "next/image";
+import { useState, useEffect } from "react";
 import { Navigations } from "./AdminNaviations";
+import { getLocalStorageItem } from "@/app/lib/api/utils"; // adjust import path as needed
+import { getAvatar, getMe, GetMeResponse } from "@/app/lib/api/user";
+import { Spin, SpinProps } from "antd";
 
 export function AdminSidebar() {
+  const [profile, setProfile] = useState<GetMeResponse | null>(null);
+  const [avatarImage, setAvatarImage] = useState<string>();
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    async function fetchProfile() {
+      const accessToken = await getLocalStorageItem("accessToken");
+      if (!accessToken) return;
+
+      try {
+        const data = await getMe(accessToken);
+        setProfile(data);
+        const avatarImage = await getAvatar();
+        setAvatarImage(avatarImage.imageUrl);
+        console.log(avatarImage);
+      } catch (err) {
+        console.error("Failed to fetch profile:", err);
+      }
+    }
+
+    fetchProfile();
+  }, []);
+
+  const stylesObject: SpinProps["styles"] = {
+    indicator: {
+      color: "#FACC14",
+    },
+  };
+
   return (
-    <div className="fixed top-0 left-0 h-screen  bg-[#F9FAFB] w-80 py-10 z-50 flex-shrink-0">
-      <AdminLogo
-        imageUrl={"/images/demoimages/morethanagamecafe.png"}
-        shopName={"More Than A Game Cafe"}
-        role={"Shop"}
-      />
+    <div className="fixed top-0 left-0 h-screen bg-[#F9FAFB] w-80 py-10 z-50 flex-shrink-0">
+      {avatarImage && profile ? (
+        <AdminLogo
+          imageUrl={avatarImage}
+          shopName={profile?.name}
+          role={"Merchant"}
+        />
+      ) : (
+        <div className="flex justify-center my-20">
+          <Spin size="large" styles={stylesObject} />
+        </div>
+      )}
+      {/* <div className="flex justify-center my-20">
+        <Spin size="large" />
+      </div> */}
       <Navigations />
     </div>
   );
@@ -19,6 +61,7 @@ interface AdminLogoProps {
   shopName: string;
   role: string;
 }
+
 function AdminLogo({ imageUrl, role, shopName }: AdminLogoProps) {
   return (
     <div className="mb-3">
@@ -28,6 +71,7 @@ function AdminLogo({ imageUrl, role, shopName }: AdminLogoProps) {
         src={imageUrl}
         width={150}
         height={150}
+        unoptimized
       />
       <h3 className="text-center font-bold text-xl">{shopName}</h3>
       <p className="text-center">{role}</p>

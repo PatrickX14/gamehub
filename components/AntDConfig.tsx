@@ -9,6 +9,12 @@ export function AntDConfig({ children }: AntDConfigProps) {
     <AntdRegistry>
       <ConfigProvider
         theme={{
+          token: {
+            colorInfo: "#FACC14", // affects .info() progress bar + border
+            colorInfoBorder: "#EAB308",
+            colorInfoBg: "#FEF9C3",
+            colorPrimary: "#FACC14",
+          },
           components: {
             Select: {
               hoverBorderColor: "#FACC14",
@@ -23,6 +29,18 @@ export function AntDConfig({ children }: AntDConfigProps) {
 
               selectorBg: "#FFFFFF",
               clearBg: "#FFFFFF",
+            },
+            Notification: {
+              // These are the actual valid tokens:
+              colorBgElevated: "#FFFFFF", // notification card background
+              colorText: "#364049",
+            },
+            Radio: {
+              colorPrimary: "#FACC14",
+              colorPrimaryHover: "#EAB308",
+              buttonSolidCheckedActiveBg: "#FACC14",
+              buttonSolidCheckedBg: "#FACC14",
+              buttonSolidCheckedHoverBg: "#FACC14",
             },
           },
         }}

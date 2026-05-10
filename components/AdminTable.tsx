@@ -7,6 +7,12 @@ import { SectionCard } from "./Cards";
 import Link from "next/link";
 import AddIcon from "@mui/icons-material/Add";
 import { ProductData } from "@/app/lib/api/admin/products";
+import {
+  DeleteButton,
+  EditButton,
+  ViewButton,
+} from "./AdminTableActionButtons";
+import { BoardgameStockData } from "@/app/lib/api/admin/boardgames";
 
 interface OrderData {
   orderId: string;
@@ -264,7 +270,7 @@ export function ProductsTable({
       (queries.dateTo === "" || createdAt <= queries.dateTo),
   );
   const totalPages = Math.ceil(filteredData?.length / pageLimit);
-  const pagedData = filteredData.slice(
+  const pagedData = filteredData?.slice(
     pageNumber * pageLimit,
     (pageNumber + 1) * pageLimit,
   );
@@ -351,41 +357,41 @@ export function ProductsTable({
             </tr>
           </thead>
           <tbody>
-            {pagedData.map(({ id, createdAt, status, name, price }) => (
-              <tr key={id} className="group">
-                <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                  {id}
-                </td>
-                <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                  {name}
-                </td>
-                <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                  ฿{Number(price).toLocaleString()}
-                </td>
-                <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                  {status}
-                </td>
-                <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                  {new Date(createdAt).toLocaleString("en-GB", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                    hour12: false,
-                  })}
-                </td>
-                <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                  <Link
-                    className="text-blue-600 hover:underline"
-                    href={`/admin/products/${id}`}
-                  >
-                    View
-                  </Link>
-                </td>
-              </tr>
-            ))}
+            {pagedData &&
+              pagedData.map(({ id, createdAt, status, name, price }) => (
+                <tr key={id} className="group">
+                  <td className="border-gray-300 px-4 py-2 text-left text-primary">
+                    {id}
+                  </td>
+                  <td className="border-gray-300 px-4 py-2 text-left text-primary">
+                    {name}
+                  </td>
+                  <td className="border-gray-300 px-4 py-2 text-left text-primary">
+                    ฿{Number(price).toLocaleString()}
+                  </td>
+                  <td className="border-gray-300 px-4 py-2 text-left text-primary">
+                    {status}
+                  </td>
+                  <td className="border-gray-300 px-4 py-2 text-left text-primary">
+                    {new Date(createdAt).toLocaleString("en-GB", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                      hour12: false,
+                    })}
+                  </td>
+                  <td className="border-gray-300  py-2 text-left text-primary">
+                    <div className="flex justify-center gap-2">
+                      <ViewButton segment={"products"} param={id} />
+                      <EditButton segment={"products/edit"} param={id} />
+                      <DeleteButton id={id} />
+                    </div>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
         {/* Pagination */}
@@ -419,18 +425,10 @@ export function ProductsTable({
   );
 }
 
-interface GamesData {
-  id: number;
-  name: string;
-  date: string;
-  quantity: number;
-  status: string;
-}
-
 interface GamesTableProps {
   tableTitle: string;
   itemsPerPage: number;
-  data: GamesData[];
+  data: BoardgameStockData[];
 }
 
 export function GamesTable({
@@ -448,14 +446,14 @@ export function GamesTable({
   });
 
   const filteredData = data.filter(
-    ({ name, id, quantity, status, date }) =>
+    ({ name, id, quantity, status, createdAt }) =>
       name.toLowerCase().includes(queries.name.toLowerCase()) &&
       (queries.status === "" ||
         status.toLocaleLowerCase() === queries.status.toLocaleLowerCase()) &&
       // (queries.paymentMethod === "" ||
       //   paymentMethod === queries.paymentMethod) &&
-      (queries.dateFrom === "" || date >= queries.dateFrom) &&
-      (queries.dateTo === "" || date <= queries.dateTo),
+      (queries.dateFrom === "" || createdAt >= queries.dateFrom) &&
+      (queries.dateTo === "" || createdAt <= queries.dateTo),
   );
   const totalPages = Math.ceil(filteredData.length / pageLimit);
   const pagedData = filteredData.slice(
@@ -515,8 +513,8 @@ export function GamesTable({
           {/* add new product */}
           <div className="flex items-center justify-center">
             <Link
-              href={"/profile/newaddress"}
-              className="flex items-center bg-[#FACC14] hover:bg-[#E7B008]/80 px-4 py-2 rounded-md "
+              href={"/admin/games/new"}
+              className="flex items-center bg-[#FACC14] hover:bg-[#E7B008]/80 px-4 py-2 rounded-md"
             >
               <AddIcon />
               Add new game
@@ -542,7 +540,7 @@ export function GamesTable({
             </tr>
           </thead>
           <tbody>
-            {pagedData.map(({ date, status, name, id, quantity }) => (
+            {pagedData.map(({ createdAt, status, name, id, quantity }) => (
               <tr key={id} className="group">
                 <td className="border-gray-300 px-4 py-2 text-left text-primary">
                   {name}
@@ -554,12 +552,11 @@ export function GamesTable({
                   {status}
                 </td>
                 <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                  {date}
+                  {createdAt}
                 </td>
-                <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                  <button className="text-blue-600 hover:underline">
-                    View
-                  </button>
+                <td className="border-gray-300 px-4 py-2 text-left text-primary flex justify-center gap-4">
+                  <EditButton segment={"/games"} param={id} />
+                  <DeleteButton id={id} />
                 </td>
               </tr>
             ))}

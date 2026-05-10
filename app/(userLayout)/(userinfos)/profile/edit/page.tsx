@@ -1,5 +1,5 @@
 import { ProfileMenu } from "@/components/ProfileMenu";
-import { UserProfileEdit } from "@/components/UserProfileEdit";
+import { ProfileEdit } from "@/components/UserProfileEdit";
 
 export default async function UserProfileEditPage() {
   return (
@@ -12,7 +12,7 @@ export default async function UserProfileEditPage() {
       {/* Profile information */}
       {/* TODO: make it responsive */}
       <div className="col-span-2 flex flex-col gap-5">
-        <UserProfileEdit />
+        <ProfileEdit />
       </div>
     </div>
   );

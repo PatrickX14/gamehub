@@ -24,7 +24,7 @@ export function AdminNewProductForm() {
   );
   const [formState, setFormState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [images, setImages] = useState<{ file: FileList; url: string }[]>([]);
+  const [images, setImages] = useState<{ file: File; url: string }[]>([]);
 
   // Fetch categories on mount so the dropdown is populated.
   // If you have a getCategories API, replace the placeholder below.
@@ -48,28 +48,17 @@ export function AdminNewProductForm() {
     fetchCategories();
   }, []);
 
-  // const categoryOptions =
-  //   categories.length > 0 ? categories.map((c) => c.label) : ["No categories"];
+  function addFiles(newFiles: File[]) {
+    if (!newFiles.length) return;
 
-  // function handleCategoryChange(e: ChangeEvent<HTMLSelectElement>) {
-  //   const selected = categories.find((c) => c.label === e.target.value);
-  //   setSelectedCategoryId(selected?.value ?? null);
-  // }
+    const accepted = newFiles.filter((f) => f.type.startsWith("image/"));
 
-  function addFiles(newFiles: FileList | File[] | null) {
-    if (!newFiles) return;
-    // Checks if file is image
-    const accepted = Array.from(newFiles).filter((f) =>
-      f.type.startsWith("image/"),
-    );
     const withUrl = accepted.map((file) => ({
       file,
       url: URL.createObjectURL(file),
     }));
-    setImages((prev) => {
-      const merged = [...prev, ...withUrl];
-      return merged;
-    });
+
+    setImages((prev) => [...prev, ...withUrl]);
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -113,12 +102,12 @@ export function AdminNewProductForm() {
         quantity,
       };
 
-      const imageIds = await uploadImages(
+      const imageIds: number[] = await uploadImages(
         token,
         images.map(({ file }) => file),
       );
 
-      await createProduct(token, payload);
+      await createProduct(token, payload, imageIds);
       setFormState("success");
       form.reset();
     } catch (err: unknown) {

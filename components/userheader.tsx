@@ -6,6 +6,7 @@ import { UserAvatar } from "./userAvatar";
 import { useEffect, useState } from "react";
 import { getAvatar } from "@/app/lib/api/user";
 import { useRouter } from "next/navigation";
+import { getLocalStorageItem } from "@/app/lib/api/utils";
 
 export function UserHeader() {
   const router = useRouter();
@@ -19,6 +20,10 @@ export function UserHeader() {
   ];
 
   useEffect(() => {
+    async function checkAccessToken() {
+      const accessToken = await getLocalStorageItem("accessToken");
+      if (!accessToken) return router.replace("/login");
+    }
     async function fetechAvatar() {
       const avatarUrl = await getAvatar();
       if (avatarUrl) {
@@ -29,6 +34,7 @@ export function UserHeader() {
         setIsLogin(false);
       }
     }
+    checkAccessToken();
     fetechAvatar();
   }, []);
 

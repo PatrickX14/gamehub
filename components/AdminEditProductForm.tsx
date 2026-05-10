@@ -30,7 +30,7 @@ export function AdminEditProductForm({ productId }: AdminEditProductFormProps) {
   );
   const [formState, setFormState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [images, setImages] = useState<{ file: FileList; url: string }[]>([]);
+  const [images, setImages] = useState<{ file: File; url: string }[]>([]);
 
   // Fetch categories on mount so the dropdown is populated.
   // If you have a getCategories API, replace the placeholder below.
@@ -48,7 +48,7 @@ export function AdminEditProductForm({ productId }: AdminEditProductFormProps) {
         }));
         setCategories(mappedCategory);
         setProductData(product);
-        // if (mapped.length > 0) setSelectedCategoryId([mapped[0].value]);
+        setSelectedCategoryId(product.categories.map(({ id }) => id));
       } catch (err) {
         console.error("Failed to fetch categories:", err);
       }
@@ -113,12 +113,12 @@ export function AdminEditProductForm({ productId }: AdminEditProductFormProps) {
         quantity,
       };
 
-      const imageIds = await uploadImages(
+      const imageIds: number[] = await uploadImages(
         token,
         images.map(({ file }) => file),
       );
 
-      await createProduct(token, payload);
+      await createProduct(token, payload, imageIds);
       setFormState("success");
       form.reset();
     } catch (err: unknown) {
@@ -139,20 +139,20 @@ export function AdminEditProductForm({ productId }: AdminEditProductFormProps) {
           name={"name"}
           label={"Product Name"}
           required
-          value={productData?.name}
+          defaultValue={productData?.name}
         />
         <div className="grid grid-cols-2 gap-4">
           <TextInput
             name={"price"}
             label={"Price"}
             required
-            value={productData?.price}
+            defaultValue={productData?.price}
           />
           <TextInput
             name={"quantity"}
             label={"Quantity"}
             required
-            value={productData?.quantity}
+            defaultValue={productData?.quantity}
           />
         </div>
         <div className="w-full">
@@ -171,7 +171,7 @@ export function AdminEditProductForm({ productId }: AdminEditProductFormProps) {
           name={"description"}
           label={"Description"}
           required
-          value={productData?.description}
+          defaultValue={productData?.description}
         />
 
         {formState === "success" && (
