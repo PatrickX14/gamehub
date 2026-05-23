@@ -27,7 +27,7 @@ export function Navigations() {
     { title: "Orders", link: "/admin/orders", icon: <ListAlt /> },
     { title: "Products", link: "/admin/products", icon: <Inventory /> },
     { title: "Games", link: "/admin/games", icon: <Casino /> },
-    { title: "Bookings", link: "/admin/bookings", icon: <TableBar /> },
+    { title: "Reservations", link: "/admin/reservations", icon: <TableBar /> },
     { title: "Parties", link: "/admin/parties", icon: <Liquor /> },
     { title: "Settings", link: "/admin", icon: <Settings /> },
   ];

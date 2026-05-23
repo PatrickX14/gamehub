@@ -1,3 +1,4 @@
+import { NoSsrConfirmReservationModal } from "@/components/ConfirmReservationModal.lazy";
 import { ReservationCardsSection } from "@/components/sections/index/gameReservationSection";
 
 export default function Home() {
@@ -15,6 +16,7 @@ export default function Home() {
       </section>
       <section className="px-10 xl:px-30">
         <ReservationCardsSection />
+        <NoSsrConfirmReservationModal />
       </section>
     </div>
   );

@@ -62,7 +62,7 @@ export function AddressSection({
         addressData.length > 0 ? null : (
           <div className="flex justify-center mb-4">
             <Link
-              href={"/admin/address/new"}
+              href={"/admin/shopinfo/address/new"}
               className="flex items-center bg-[#FACC14] hover:bg-[#E7B008]/80 px-4 py-2 rounded-md "
             >
               <AddIcon />

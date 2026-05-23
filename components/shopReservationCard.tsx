@@ -4,7 +4,7 @@ import StoreIcon from "@mui/icons-material/Store";
 interface Props {
   shopName: string;
   location: string;
-  openingHours: string;
+  openingHours: string[];
   imageUrl: string;
   isSelected: boolean;
   tags: Array<string>;
@@ -35,11 +35,15 @@ export function ShopReservationCard({
       {/* Location and Opening Hours */}
       <div className="mt-3 space-y-2">
         <p className="text-[#94A3B8]">Hours:</p>
-        <p className="text-[#364049]">{openingHours}</p>
+        {openingHours.map((value, index) => (
+          <p className="text-[#364049]" key={index}>
+            {value}
+          </p>
+        ))}
       </div>
 
       {/* tags */}
-      <div>
+      <div className="mt-3 ">
         {tags.map((tag) => (
           <div key={tag} className="flex gap-2 items-center">
             <CheckIcon fontSize="small" className="text-[#16A249]" />

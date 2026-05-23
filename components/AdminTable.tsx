@@ -1,7 +1,7 @@
 "use client";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { DateInput, Select, TextInput } from "./Input";
 import { SectionCard } from "./Cards";
 import Link from "next/link";
@@ -13,6 +13,18 @@ import {
   ViewButton,
 } from "./AdminTableActionButtons";
 import { BoardgameStockData } from "@/app/lib/api/admin/boardgames";
+import { Pagination, Tag } from "antd";
+import dayjs from "dayjs";
+import { getLocalStorageItem } from "@/app/lib/api/utils";
+import {
+  getMerchantReservations,
+  ReservationItem,
+} from "@/app/lib/api/merchant/reservations";
+import timezone from "dayjs/plugin/timezone.js";
+import utc from "dayjs/plugin/utc.js";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 interface OrderData {
   orderId: string;
@@ -437,7 +449,7 @@ export function GamesTable({
   itemsPerPage,
 }: GamesTableProps) {
   const [pageNumber, setPageNumber] = useState<number>(0);
-  const [pageLimit, setPageLimit] = useState<number>(itemsPerPage || 20);
+  const [pageLimit, setPageLimit] = useState<number>(itemsPerPage || 10);
   const [queries, setQueries] = useState({
     name: "",
     status: "",
@@ -476,6 +488,11 @@ export function GamesTable({
       setQueries((prev) => ({ ...prev, [key]: event.target.value }));
       setPageNumber(0);
     };
+  }
+
+  function handlePaginate(page: number, pageSize: number) {
+    setPageNumber(page);
+    setPageLimit(pageSize);
   }
 
   return (
@@ -552,7 +569,7 @@ export function GamesTable({
                   {status}
                 </td>
                 <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                  {createdAt}
+                  {dayjs(createdAt).format("DD/MM/YYYY mm:ss")}
                 </td>
                 <td className="border-gray-300 px-4 py-2 text-left text-primary flex justify-center gap-4">
                   <EditButton segment={"/games"} param={id} />
@@ -562,8 +579,16 @@ export function GamesTable({
             ))}
           </tbody>
         </table>
+
         {/* Pagination */}
-        <div className="flex justify-end gap-2 items-center">
+        <Pagination
+          total={data.length}
+          onChange={handlePaginate}
+          defaultPageSize={10}
+          align={"end"}
+        />
+
+        {/* <div className="flex justify-end gap-2 items-center">
           <button
             className="size-8 cursor-pointer rounded-md hover:bg-[#FACC14]"
             onClick={() => setPageNumber((p: number) => (p > 0 ? p - 1 : p))}
@@ -587,7 +612,7 @@ export function GamesTable({
           >
             <ChevronRightIcon />
           </button>
-        </div>
+        </div> */}
       </SectionCard>
     </div>
   );
@@ -614,6 +639,7 @@ export function RevervationTable({
   itemsPerPage,
   tableTitle,
 }: RevervationTableProps) {
+  const [reservations, setReservations] = useState<ReservationItem[]>([]);
   const [pageNumber, setPageNumber] = useState<number>(0);
   const [pageLimit, setPageLimit] = useState<number>(itemsPerPage || 20);
   const [queries, setQueries] = useState({
@@ -626,10 +652,12 @@ export function RevervationTable({
     game: "",
   });
 
-  const filteredData = data.filter(
-    ({ customerName, id, game, status, bookedAt, endAt, startAt }) =>
-      game.toLocaleLowerCase().includes(queries.game.toLocaleLowerCase()) &&
-      customerName.toLowerCase().includes(queries.name.toLowerCase()) &&
+  const filteredData = reservations.filter(
+    ({ id, boardgameName, hostName, status, createdAt, endAt, startAt }) =>
+      boardgameName
+        .toLocaleLowerCase()
+        .includes(queries.game.toLocaleLowerCase()) &&
+      hostName.toLowerCase().includes(queries.name.toLowerCase()) &&
       (queries.status === "" ||
         (id.toString() === queries.id &&
           status.toLocaleLowerCase() === queries.status.toLocaleLowerCase())) &&
@@ -659,6 +687,18 @@ export function RevervationTable({
       setPageNumber(0);
     };
   }
+
+  useEffect(() => {
+    async function fetchDatas() {
+      const accessToken = await getLocalStorageItem("accessToken");
+      if (!accessToken) return;
+      const reservationData = await getMerchantReservations(accessToken);
+      if (!reservationData) return;
+      setReservations(reservationData);
+      console.log(reservationData);
+    }
+    fetchDatas();
+  }, []);
 
   return (
     <div>
@@ -710,7 +750,7 @@ export function RevervationTable({
             <tr>
               <th className="px-4 py-2 text-left text-primary">Id</th>
               <th className="border-x border-gray-300 px-4 py-2 text-left text-primary">
-                Customer
+                Hosted by
               </th>
               <th className="border-x border-gray-300 px-4 py-2 text-left text-primary">
                 Game
@@ -734,10 +774,10 @@ export function RevervationTable({
             {pagedData.map(
               ({
                 id,
-                bookedAt,
-                customerName,
+                createdAt,
+                hostName,
                 endAt,
-                game,
+                boardgameName,
                 startAt,
                 status,
               }) => (
@@ -746,51 +786,40 @@ export function RevervationTable({
                     {id}
                   </td>
                   <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                    {customerName}
+                    {hostName}
                   </td>
                   <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                    {game}
+                    {boardgameName}
                   </td>
                   <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                    {status}
+                    <Tag
+                      variant="solid"
+                      color={
+                        status === "PENDING APPROVAL"
+                          ? "orange-inverse"
+                          : status === "CANCELLED"
+                            ? "red"
+                            : status === "CONFIRMED"
+                              ? "green"
+                              : status === "COMPLETED"
+                                ? "green"
+                                : "geekblue"
+                      }
+                    >
+                      {status}
+                    </Tag>
                   </td>
                   <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                    {new Date(startAt).toLocaleString("en-GB", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                      hour12: false,
-                    })}
+                    {dayjs.tz(startAt).format("ddd DD/MMMM/YYYY HH:mm")}
                   </td>
                   <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                    {new Date(endAt).toLocaleString("en-GB", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                      hour12: false,
-                    })}
+                    {dayjs.tz(endAt).format("ddd DD/MMMM/YYYY HH:mm")}
                   </td>
                   <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                    {new Date(bookedAt).toLocaleString("en-GB", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                      hour12: false,
-                    })}
+                    {dayjs.tz(createdAt).format("ddd DD/MMMM/YYYY HH:mm")}
                   </td>
-                  <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                    <button className="text-blue-600 hover:underline">
-                      View
-                    </button>
+                  <td className="border-gray-300 px-4 py-2 text-left text-primary flex justify-center gap-4">
+                    <ViewButton segment={"reservations"} param={id} />
                   </td>
                 </tr>
               ),

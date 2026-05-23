@@ -1,108 +1,19 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { GameReservationCard } from "@/components/GameReservationCard";
 import { ShopReservationCard } from "@/components/shopReservationCard";
 import { Switch, SwitchProps } from "antd";
 import { createStyles } from "antd-style";
-
-const demoGameCards = [
-  {
-    imageUrl: "/images/demoimages/ArkhamHorrorTGG_box_front_720x.webp",
-    gameName: "Arkham Horror",
-    description: "Investigate the horrors of Arkham while courting cosmic doom",
-    players: "1 - 2 players",
-    duration: "60 - 120 min",
-  },
-  {
-    imageUrl: "/images/demoimages/beerandbread.jpg",
-    gameName: "Beer & Bread",
-    description:
-      "Two villages face off in the traditions of brewing beer and baking bread",
-    players: "2 players",
-    duration: "30 - 45 min",
-  },
-  {
-    imageUrl: "/images/demoimages/Catan-2015-boxart.jpg",
-    gameName: "Settlers of Catan",
-    description: "Build settlements and cities in this classic strategy game",
-    players: "3-4 players",
-    duration: "60 - 90 min",
-  },
-  {
-    imageUrl: "/images/demoimages/Carcassonne-game.jpg",
-    gameName: "Carcassonne",
-    description:
-      "Shape the medieval French landscape, claiming cities, monasteries, roads, and farms",
-    players: "2 - 5 players",
-    duration: "30 - 45 min",
-  },
-  {
-    imageUrl: "/images/demoimages/Stone_Age_game.jpg",
-    gameName: "Stone Age",
-    description:
-      "Prehistoric tribes struggle to survive and adapt. Which one will rise to the top?",
-    players: "2 - 4 players",
-    duration: "60 - 90 min",
-  },
-  {
-    imageUrl: "/images/demoimages/Lostcities250px.jpg",
-    gameName: "Lost Cities",
-    description:
-      "Set out on expeditions, but will your findings outweigh the cost of each adventure?",
-    players: "2 players",
-    duration: "30 min",
-  },
-];
-
-const demoShopCards = [
-  {
-    shopName: "Legendary Wargame",
-    location: "55/9 ม.9 ถ.กาญจนาภิเษก ซอยกันตนา ต.บางม่วง อ.บางใหญ่ จ.นนทบุรี",
-    openingHours: "Mon - Sun: 10:30 - 23:00",
-    isOpen: true,
-    imageUrl: "/images/demoimages/legendarywargame.png",
-    isSelected: false,
-    onClick: () => {},
-    tags: [
-      "Food and Drink",
-      "Air Conditioning",
-      "Parking Available",
-      "Cozy Atmosphere",
-    ],
-  },
-  {
-    shopName: "MORE THAN A GAME CAFE",
-    location: "55/9 ม.9 ถ.กาญจนาภิเษก ซอยกันตนา ต.บางม่วง อ.บางใหญ่ จ.นนทบุรี",
-    openingHours: "Mon - Sun: 10:00 - 20:00",
-    isOpen: true,
-    imageUrl: "/images/demoimages/morethanagamecafe.png",
-    isSelected: false,
-    onClick: () => {},
-    tags: [
-      "Food and Drink",
-      "Air Conditioning",
-      "Parking Available",
-      "Family Friendly",
-      "Private Room",
-    ],
-  },
-  {
-    shopName: "GameHaus Boardgame Cafe",
-    location: "55/9 ม.9 ถ.กาญจนาภิเษก ซอยกันตนา ต.บางม่วง อ.บางใหญ่ จ.นนทบุรี",
-    openingHours: "Tue - Sun: 11:00 - 00:00",
-    isOpen: false,
-    imageUrl: "/images/demoimages/GameHausBoardgameCafe.jpg",
-    isSelected: false,
-    onClick: () => {},
-    tags: [
-      "Food and Drink",
-      "Air Conditioning",
-      "Parking Available",
-      "Family Friendly",
-      "Private Room",
-    ],
-  },
-];
+import {
+  getBoardgamesForReservations,
+  getMerchantOptions,
+  getMerchantsForReservations,
+  MerchantData,
+  type BoardgameData,
+} from "@/app/lib/api/users/reservation";
+import { getLocalStorageItem } from "@/app/lib/api/utils";
+import { debounce } from "@/app/lib/debounce";
+import dayjs from "dayjs";
 
 const useStyle = createStyles(({ token }) => ({
   root: {
@@ -113,27 +24,80 @@ const useStyle = createStyles(({ token }) => ({
 
 export function ReservationCardsSection() {
   const [isShopFirst, setFirstSelection] = useState<boolean>(false);
-  const [selectedCard, setSelectedCard] = useState<string>("");
-  const [selectedShop, setSelectedShop] = useState<string>("");
-  const [shops, setShops] = useState<typeof demoShopCards>(demoShopCards);
+  const [selectedGameId, setSelectedGameId] = useState<number | null>();
+  const [selectedMercantId, setSelectedMerchantId] = useState<number | null>();
+  const [boardgameData, setBoardgameData] = useState<BoardgameData[]>([]);
+  const [merchanteData, setMerchantData] = useState<MerchantData[]>([]);
+  const [boardgameQuery, setBoardgameQuery] = useState<string>("");
+  const [merchantQuery, setshopQuery] = useState<string>("");
 
-  function handleGameSelect(gameName: string) {
-    setSelectedCard(gameName);
-  }
+  const [date, setDate] = useState<string>("");
+  const [time, setTime] = useState<string>("");
+  const [playerCount, setPlayerCount] = useState<number>(1);
 
-  function handleShopSearch(shopName: string) {
-    if (!shopName.trim()) {
-      setShops(demoShopCards);
-      return;
-    }
-    const filteredShops = demoShopCards.filter((card) =>
-      card.shopName.toLowerCase().includes(shopName.trim().toLowerCase()),
+  async function handleGameSelect(gameId: number) {
+    if (!date || !time) return; // guard: inputs must be filled
+
+    const accessToken = await getLocalStorageItem("accessToken");
+    if (!accessToken) return;
+
+    const startAt = dayjs(`${date}T${time}:00+07:00`).format(
+      "YYYY-MM-DDTHH:mm:ssZ",
     );
-    setShops(filteredShops);
+
+    const result = await getMerchantOptions(
+      accessToken,
+      gameId,
+      startAt,
+      playerCount,
+    );
+
+    setMerchantData(
+      result.merchantOptions.map((m) => ({
+        id: m.shopId,
+        name: m.shopName,
+        email: m.shopEmail,
+        phoneNumber: m.shopPhone,
+        businessHours: m.businessHours,
+        address: m.address,
+      })),
+    );
+    setSelectedGameId(gameId);
   }
 
-  function onSwitchCheck(checked: boolean) {
+  const handleGameSearch = useMemo(
+    () => debounce((value: string) => setBoardgameQuery(value), 300),
+    [],
+  );
+
+  const handleShopSearch = useMemo(
+    () => debounce((value: string) => setshopQuery(value), 300),
+    [],
+  );
+
+  async function onSwitchCheck(checked: boolean) {
+    setBoardgameQuery("");
+    setshopQuery("");
+    setSelectedGameId(null);
+    setSelectedMerchantId(null);
     setFirstSelection(checked);
+
+    const accessToken = await getLocalStorageItem("accessToken");
+    if (!accessToken) return;
+    // checked is user choose shop first
+    if (checked) {
+      const boardgames = await getBoardgamesForReservations(
+        accessToken,
+        boardgameQuery,
+      );
+      setBoardgameData(boardgames);
+    } else {
+      const merchants = await getMerchantsForReservations(
+        accessToken,
+        merchantQuery,
+      );
+      setMerchantData(merchants);
+    }
   }
 
   const stylesFn: SwitchProps["styles"] = (info) => {
@@ -147,6 +111,25 @@ export function ReservationCardsSection() {
 
   const { styles: classNames } = useStyle();
 
+  useEffect(() => {
+    async function fetchDatas() {
+      const accessToken = await getLocalStorageItem("accessToken");
+      if (!accessToken) return;
+      const boardgames = await getBoardgamesForReservations(
+        accessToken,
+        boardgameQuery,
+      );
+      const merchants = await getMerchantsForReservations(
+        accessToken,
+        merchantQuery,
+      );
+      if (!boardgames && !merchants) return;
+      setBoardgameData(boardgames);
+      setMerchantData(merchants);
+    }
+    fetchDatas();
+  }, [boardgameQuery]);
+
   const gameSection = (
     <>
       <div className="w-full my-7">
@@ -154,19 +137,20 @@ export function ReservationCardsSection() {
           className="bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14] w-full"
           placeholder="Search board games..."
           type="text"
+          onChange={(event) => handleGameSearch(event.target.value)}
         />
       </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-12 mb-12">
-        {demoGameCards.map(
-          ({ gameName, description, duration, players }, index) => (
+        {boardgameData.map(
+          ({ gameName, description, duration, players, gameId }, index) => (
             <GameReservationCard
               key={index}
               gameName={gameName}
               description={description}
               players={players}
               duration={duration}
-              onClick={() => handleGameSelect(gameName)}
-              isSelected={selectedCard === gameName}
+              onClick={() => handleGameSelect(gameId)}
+              isSelected={selectedGameId === gameId}
             />
           ),
         )}
@@ -177,19 +161,36 @@ export function ReservationCardsSection() {
   const shopSection = (
     <>
       <div className="w-full my-7">
+        <select
+          className={`col-span-full bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 w-full focus:ring-[#FACC14]`}
+        >
+          <option>All Provinces</option>
+          <option>Bangkok</option>
+          <option>Nonthaburi</option>
+        </select>
         <input
-          className="bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14] w-full"
-          placeholder="Search board games..."
+          className="bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14] w-full mt-6"
+          placeholder="Search merchants..."
           type="text"
+          onChange={(event) => setshopQuery(event.target.value)}
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6 mb-6">
-        {shops.map((card, index) => (
+        {merchanteData.map(({ id, name, address, businessHours }, index) => (
           <ShopReservationCard
             key={index}
-            {...card}
-            isSelected={selectedShop === card.shopName}
-            onClick={() => setSelectedShop(card.shopName)}
+            isSelected={selectedMercantId === id}
+            onClick={() => setSelectedMerchantId(id)}
+            shopName={name}
+            location={address}
+            openingHours={businessHours}
+            imageUrl={""}
+            tags={[
+              "Food and Drink",
+              "Air Conditioning",
+              "Parking Available",
+              "Cozy Atmosphere",
+            ]}
           />
         ))}
       </div>
@@ -222,37 +223,42 @@ export function ReservationCardsSection() {
         </p>
       </div>
 
-      {/* First section */}
-      {isShopFirst ? shopSection : gameSection}
-
       {/* Inputs */}
       <form className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
         <div className="grid grid-cols-2 gap-6">
           <input
-            className={`bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14] `}
+            className={`bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]`}
             type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
           />
           <input
-            className={`bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14] `}
+            className={`bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]`}
             type="time"
+            value={time}
+            onChange={(e) => setTime(e.target.value)}
           />
         </div>
         <input
           className={`bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]`}
           placeholder="Select players"
           type="number"
+          value={playerCount}
+          onChange={(e) => setPlayerCount(Number(e.target.value))}
         />
-        <select
-          className={`col-span-full bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14]`}
-        >
-          <option>All Provinces</option>
-          <option>Bangkok</option>
-          <option>Nonthaburi</option>
-        </select>
       </form>
 
+      {/* First section */}
+      {isShopFirst ? shopSection : gameSection}
+
       {/* Second section */}
-      {isShopFirst ? gameSection : shopSection}
+      {isShopFirst
+        ? selectedMercantId != null
+          ? gameSection
+          : null
+        : selectedGameId != null
+          ? shopSection
+          : null}
 
       <button className="bg-[#FACC14] hover:bg-[#EAB80B] shadow-xl block text-gray-900 font-semibold rounded-md mt-6 mx-auto transition-colors cursor-pointer py-3 px-10">
         Reserve

@@ -27,7 +27,7 @@ export async function login(
   const data = await res.json();
 
   if (!res.ok) {
-    return { error: (data.message as string) || "Login failed" };
+    return { error: "Invalid credentials" };
   } else {
     await createLocalStorageItem("accessToken", data.accessToken);
   }

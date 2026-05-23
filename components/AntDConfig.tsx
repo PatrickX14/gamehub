@@ -42,6 +42,14 @@ export function AntDConfig({ children }: AntDConfigProps) {
               buttonSolidCheckedBg: "#FACC14",
               buttonSolidCheckedHoverBg: "#FACC14",
             },
+            Pagination: {
+              itemActiveBg: "#FACC14",
+              itemActiveColor: "##364049",
+              itemActiveColorHover: "#364049",
+            },
+            Button: {
+              primaryColor: "#364049",
+            },
           },
         }}
       >

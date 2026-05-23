@@ -1,7 +1,7 @@
 "use client";
 import { getMe, GetMeResponse } from "@/app/lib/api/user";
 import { getLocalStorageItem } from "@/app/lib/api/utils";
-import { AdminTimeSetting } from "@/components/AdminTimeSetting";
+import { AdminTimeCard } from "@/components/AdminTimeCard";
 import { ProfileInfo } from "@/components/ProfileInfo";
 import { AddressSection } from "@/components/UserAddressInfo";
 import { useEffect, useState } from "react";
@@ -32,7 +32,7 @@ export default function ShopInfoPage() {
         addressData={profileData?.addresses.items ?? []}
         adminMode
       />
-      <AdminTimeSetting />
+      <AdminTimeCard />
     </div>
   );
 }

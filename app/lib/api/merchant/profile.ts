@@ -44,3 +44,68 @@ export async function updateMerchantProfile(
 
   return response.json();
 }
+
+export type BusinessHour = {
+  day: string;
+  open: string | null;
+  close: string | null;
+};
+
+type GetMerchantBusinessHourResponse = {
+  total: number;
+  items: BusinessHour[];
+};
+
+export async function getMerchantBusinessHour(
+  accessToken: string,
+  retry: number = 0,
+): Promise<GetMerchantBusinessHourResponse> {
+  const response = await fetch(`${API_URL}/merchant/profile/businesshours`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  if (!response.ok && retry < 1) {
+    return await refreshToken(() =>
+      getMerchantBusinessHour(accessToken, retry + 1),
+    );
+  }
+  if (!response.ok) {
+    throw new Error("Failed to fetch merchant business hour");
+  }
+
+  return response.json();
+}
+
+type PutMerchantBusinessHourResponse = {
+  message: string;
+};
+
+export async function putMerchantBusinessHour(
+  accessToken: string,
+  payload: BusinessHour[],
+  retry: number = 0,
+): Promise<PutMerchantBusinessHourResponse> {
+  console.log(payload);
+  const jsonPayload = JSON.stringify({ businessHours: payload });
+  console.log(jsonPayload);
+  const response = await fetch(`${API_URL}/merchant/profile/businesshours`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({ businessHours: payload }),
+  });
+  if (!response.ok && retry < 1) {
+    return await refreshToken(() =>
+      putMerchantBusinessHour(accessToken, payload, retry + 1),
+    );
+  }
+  if (!response.ok) {
+    throw new Error("Failed to update merchant business hour");
+  }
+  return response.json();
+}

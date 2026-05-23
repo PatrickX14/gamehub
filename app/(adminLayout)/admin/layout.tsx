@@ -1,6 +1,13 @@
-import { AdminSidebar } from "@/components/AdminSidebar";
+"use client";
+// import { AdminSidebar } from "@/components/AdminSidebar";
 import { AntDConfig } from "@/components/AntDConfig";
 import { ReactNode } from "react";
+import dynamic from "next/dynamic";
+
+const AdminSidebar = dynamic(
+  () => import("@/components/AdminSidebar").then((mod) => mod.AdminSidebar),
+  { ssr: false },
+);
 
 export default function AdminLayout({
   children,

@@ -1,5 +1,12 @@
+"use client";
 import Link from "next/link";
 import { Settings } from "@mui/icons-material";
+import {
+  BusinessHour,
+  getMerchantBusinessHour,
+} from "@/app/lib/api/merchant/profile";
+import { useEffect, useState } from "react";
+import { getLocalStorageItem } from "@/app/lib/api/utils";
 
 export function AdminContactSetting() {
   return (
@@ -12,22 +19,6 @@ export function AdminContactSetting() {
   );
 }
 
-interface DaySchedule {
-  day: string;
-  open: string | null;
-  close: string | null;
-}
-
-const schedule: DaySchedule[] = [
-  { day: "Sunday", open: null, close: null },
-  { day: "Monday", open: "10:00", close: "20:00" },
-  { day: "Tuesday", open: "10:00", close: "20:00" },
-  { day: "Wednesday", open: "10:00", close: "20:00" },
-  { day: "Thursday", open: "10:00", close: "20:00" },
-  { day: "Friday", open: "10:00", close: "21:00" },
-  { day: "Saturday", open: null, close: null },
-];
-
 const DAYS = [
   "Sunday",
   "Monday",
@@ -39,11 +30,31 @@ const DAYS = [
 ];
 
 export function BusinessHours() {
+  const [timeData, setTimeData] = useState<BusinessHour[]>();
   const today = DAYS[new Date().getDay()];
+
+  useEffect(() => {
+    async function fetchTimeData() {
+      const accessToken = await getLocalStorageItem("accessToken");
+      if (!accessToken) return;
+      const res = await getMerchantBusinessHour(accessToken);
+      console.log(res);
+      if (res.items) {
+        setTimeData(
+          res.items.map(({ day, open, close }) => ({
+            day,
+            open,
+            close,
+          })),
+        );
+      }
+    }
+    fetchTimeData();
+  }, []);
 
   return (
     <div className="flex flex-col gap-0.5">
-      {schedule.map(({ day, open, close }) => {
+      {timeData?.map(({ day, open, close }) => {
         const isToday = day === today;
         const isOpen = open !== null;
 
@@ -90,7 +101,7 @@ export function BusinessHours() {
                   </span>
                   {isToday && (
                     <>
-                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 ml-1.5" />
+                      <span className="size-2 rounded-full bg-green-500 ml-1.5" />
                       <span className="text-xs text-gray-400">Today</span>
                     </>
                   )}
@@ -104,8 +115,8 @@ export function BusinessHours() {
       })}
       <div className="flex justify-end">
         <Link
-          href={`/profile/`}
-          className="flex items-center bg-[#FACC14] hover:bg-[#E7B008]/80 px-4 py-2 rounded-md "
+          href={`/admin/shopinfo/editbusinesshour`}
+          className="flex items-center bg-[#FACC14] hover:bg-[#E7B008]/80 px-4 py-2 rounded-md"
         >
           <Settings />
           Edit

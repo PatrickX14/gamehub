@@ -7,7 +7,7 @@ import { PartyDetailModal } from "@/components/partyDetailModal";
 import { CreatePartyModal } from "@/components/createPartyModal";
 import { PartyCard } from "@/components/PartyCard";
 
-const demoParties: PartyCardProps[] = [
+const demoParties = [
   {
     gameImageUrl: "/images/demoimages/Catan-2015-boxart.jpg",
     gameName: "Settlers of Catan",
@@ -16,6 +16,7 @@ const demoParties: PartyCardProps[] = [
     date: "24/10/2025 17:30 - 19:30",
     message: "Looking for 2 more players",
     participantAvatarUrls: [null, null, null, null],
+    currentMembers: 2,
     maxParticipants: 4,
     status: "Booked",
   },
@@ -27,6 +28,7 @@ const demoParties: PartyCardProps[] = [
     date: "09/03/2025 10:00 - 12:00",
     message: "Table is ready! See you all tomorrow ✋",
     participantAvatarUrls: [null, null, null, null, null],
+    currentMembers: 3,
     maxParticipants: 5,
     status: "Gathering",
   },
@@ -38,6 +40,7 @@ const demoParties: PartyCardProps[] = [
     date: "14/03/2025 18:30 - 21:00",
     message: "Looking for 3 more bird lovers 🐦",
     participantAvatarUrls: [null, null],
+    currentMembers: 4,
     maxParticipants: 5,
     status: "Gathering",
   },
@@ -49,6 +52,7 @@ const demoParties: PartyCardProps[] = [
     date: "15/03/2025 15:00 - 18:00",
     message: "Game is full, starting soon!",
     participantAvatarUrls: [null, null, null, null],
+    currentMembers: 0,
     maxParticipants: 4,
     status: "Full",
   },
@@ -165,10 +169,31 @@ export default function PartyPage() {
 
       {/* party cards */}
       <div className="grid grid-cols-2 gap-6 mt-6">
-        <PartyCard />
-        <PartyCard />
-        <PartyCard />
-        <PartyCard />
+        {demoParties.map(
+          (
+            {
+              date,
+              gameName,
+              hostName,
+              location,
+              maxParticipants,
+              status,
+              currentMembers,
+            },
+            index,
+          ) => (
+            <PartyCard
+              key={index}
+              gameName={gameName}
+              hostName={hostName}
+              location={location}
+              startAt={date}
+              currentMembers={currentMembers}
+              maxMembers={maxParticipants}
+              status={status}
+            />
+          ),
+        )}
         {/* {demoParties.map((party, i) => (
           <PartyCard
             key={i}

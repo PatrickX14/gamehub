@@ -1,56 +1,22 @@
-"use client";
-
-import { useState } from "react";
 import { ProfileMenu } from "@/components/ProfileMenu";
 import BookingInfo from "@/components/BookingInfo";
+import { getUserReservations } from "@/app/lib/api/users/reservation";
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone.js";
+import utc from "dayjs/plugin/utc.js";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-const MOCK_UPCOMING_BOOKINGS = [
-  {
-    id: "b1",
-    storeName: "GameHub Center District 1",
-    storeAddress: "123 Gaming Street, District 1, Ho Chi Minh City",
-    date: "October 12, 2026",
-    time: "14:00 - 18:00",
-    mapUrl: "https://maps.google.com",
-    status: "upcoming" as const,
-  },
-  {
-    id: "b2",
-    storeName: "GameHub Cyber District 7",
-    storeAddress: "456 Tech Avenue, District 7, Ho Chi Minh City",
-    date: "October 15, 2026",
-    time: "09:00 - 12:00",
-    mapUrl: "https://maps.google.com",
-    status: "upcoming" as const,
-  },
-];
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
-const MOCK_PAST_BOOKINGS = [
-  {
-    id: "b3",
-    storeName: "GameHub Center District 1",
-    storeAddress: "123 Gaming Street, District 1, Ho Chi Minh City",
-    date: "September 05, 2026",
-    time: "18:00 - 22:00",
-    mapUrl: "https://maps.google.com",
-    status: "past" as const,
-  },
-  {
-    id: "b4",
-    storeName: "GameHub Arena District 3",
-    storeAddress: "789 Esport Blvd, District 3, Ho Chi Minh City",
-    date: "August 20, 2026",
-    time: "10:00 - 16:00",
-    mapUrl: "https://maps.google.com",
-    status: "past" as const,
-  },
-];
-
-export default function BookingPage() {
-  const [activeTab, setActiveTab] = useState<"upcoming" | "past">("upcoming");
-
-  const displayedBookings =
-    activeTab === "upcoming" ? MOCK_UPCOMING_BOOKINGS : MOCK_PAST_BOOKINGS;
+export default async function BookingPage() {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken");
+  if (!accessToken) {
+    redirect("/login");
+  }
+  const reservations = await getUserReservations(accessToken.value);
 
   return (
     <div className="xl:px-30 grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -71,7 +37,7 @@ export default function BookingPage() {
             </div>
 
             {/* Tabs */}
-            <div className="flex bg-[#F9FAFB] p-1 rounded-lg border border-[#364049]/10">
+            {/* <div className="flex bg-[#F9FAFB] p-1 rounded-lg border border-[#364049]/10">
               <button
                 onClick={() => setActiveTab("upcoming")}
                 className={`px-4 py-2 rounded-md font-semibold text-sm transition-all ${
@@ -92,25 +58,30 @@ export default function BookingPage() {
               >
                 Past
               </button>
-            </div>
+            </div> */}
           </div>
 
           <div className="flex flex-col gap-6">
-            {displayedBookings.length > 0 ? (
-              displayedBookings.map((booking) => (
+            {reservations ? (
+              reservations.map((reservation) => (
                 <BookingInfo
-                  key={booking.id}
-                  storeName={booking.storeName}
-                  storeAddress={booking.storeAddress}
-                  date={booking.date}
-                  time={booking.time}
-                  mapUrl={booking.mapUrl}
-                  status={booking.status}
+                  key={reservation.id}
+                  storeName={reservation.merchantName}
+                  storeAddress={reservation.merchantAddress}
+                  startAt={dayjs(reservation.startAt)
+                    .tz("Asia/Bangkok")
+                    .format("D/MMMM/YYYY hh:mm")}
+                  endAt={dayjs(reservation.endAt)
+                    .tz("Asia/Bangkok")
+                    .format("D/MMMM/YYYY hh:mm")}
+                  mapUrl={""}
+                  status={reservation.status}
+                  boardgameName={reservation.boardgameName}
                 />
               ))
             ) : (
               <div className="text-center py-12 text-secondary bg-[#F9FAFB] rounded-md border border-dashed border-[#364049]/20">
-                <p>No {activeTab} bookings found.</p>
+                <p>No bookings found.</p>
               </div>
             )}
           </div>

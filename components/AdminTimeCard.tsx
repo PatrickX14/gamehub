@@ -2,7 +2,7 @@ import { SectionCard } from "./Cards";
 import { BusinessHours } from "./AdminSettings";
 // import { Toggle } from "./Input";
 
-export function AdminTimeSetting() {
+export function AdminTimeCard() {
   return (
     <SectionCard
       title={"Open-Close Hour"}

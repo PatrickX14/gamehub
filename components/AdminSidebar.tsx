@@ -9,6 +9,8 @@ import { Spin, SpinProps } from "antd";
 export function AdminSidebar() {
   const [profile, setProfile] = useState<GetMeResponse | null>(null);
   const [avatarImage, setAvatarImage] = useState<string>();
+  const [isMounted, setIsMounted] = useState(false);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
     async function fetchProfile() {
@@ -20,7 +22,7 @@ export function AdminSidebar() {
         setProfile(data);
         const avatarImage = await getAvatar();
         setAvatarImage(avatarImage.imageUrl);
-        console.log(avatarImage);
+        setIsMounted(true);
       } catch (err) {
         console.error("Failed to fetch profile:", err);
       }
@@ -37,10 +39,14 @@ export function AdminSidebar() {
 
   return (
     <div className="fixed top-0 left-0 h-screen bg-[#F9FAFB] w-80 py-10 z-50 flex-shrink-0">
-      {avatarImage && profile ? (
+      {!isMounted ? (
+        // Render nothing (or a static skeleton) during SSR + first paint
+        // so server and client HTML always match
+        <div className="flex justify-center my-20" />
+      ) : avatarImage && profile ? (
         <AdminLogo
           imageUrl={avatarImage}
-          shopName={profile?.name}
+          shopName={profile.name} // no need for ?. since profile is checked
           role={"Merchant"}
         />
       ) : (
