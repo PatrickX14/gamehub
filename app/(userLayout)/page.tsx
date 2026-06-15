@@ -1,7 +1,13 @@
-import { NoSsrConfirmReservationModal } from "@/components/ConfirmReservationModal.lazy";
 import { ReservationCardsSection } from "@/components/sections/index/gameReservationSection";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default async function Home() {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  if (!accessToken) {
+    redirect("/login");
+  }
   return (
     <div>
       <section className="mb-6">
@@ -15,8 +21,7 @@ export default function Home() {
         </p>
       </section>
       <section className="px-10 xl:px-30">
-        <ReservationCardsSection />
-        <NoSsrConfirmReservationModal />
+        <ReservationCardsSection accessToken={accessToken} />
       </section>
     </div>
   );

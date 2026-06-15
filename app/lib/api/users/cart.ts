@@ -1,40 +1,48 @@
+import { redirect } from "next/navigation";
 import { refreshToken } from "../utils";
 
 const API_URL = process.env.API_URL ?? "http://localhost:3000";
 
-export interface CartItem {
-  id: number;
+export type CartItem = {
   productId: number;
-  productName: string;
-  price: string;
   quantity: number;
-}
+  productName: string;
+  price: number;
+  totalPrice: number;
+};
+
+export type CartItems = {
+  merchantId: number;
+  merchantName: string;
+  merchantImageUrl: string;
+  items: CartItem[];
+};
+
+type CartResponse = {
+  total: number;
+  items: CartItems[];
+};
 
 export async function userGetCartItems(
   accessToken: string,
-  retry: number = 0,
-): Promise<CartItem[] | null> {
-  if (!accessToken) {
-    throw new Error("Access token is missing");
+): Promise<CartResponse> {
+  const res = await fetch(`${API_URL}/carts`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (res.status === 403) {
+    redirect("/login");
   }
-  try {
-    const res = await fetch(`${API_URL}/users/cart`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    if (!res.ok && retry < 1) {
-      return await refreshToken(() => userGetCartItems(accessToken, retry + 1));
-    }
-    if (!res.ok) {
-      return null;
-    }
-    const data = await res.json();
-    return data.items;
-  } catch (err) {
-    throw new Error("Failed to fetch cart items");
+
+  if (!res.ok) {
+    throw new Error(res.statusText);
   }
+
+  const data = await res.json();
+  return data;
 }
 
 export async function userAddToCart(
@@ -47,7 +55,7 @@ export async function userAddToCart(
     throw new Error("Access token is missing");
   }
   try {
-    const res = await fetch(`${API_URL}/users/cart/items`, {
+    const res = await fetch(`${API_URL}/carts`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

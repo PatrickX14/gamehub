@@ -16,6 +16,10 @@ export function AntDConfig({ children }: AntDConfigProps) {
             colorPrimary: "#FACC14",
           },
           components: {
+            Checkbox: {
+              colorPrimary: "#FACC14",
+              colorPrimaryHover: "#FACC14",
+            },
             Select: {
               hoverBorderColor: "#FACC14",
               activeBorderColor: "#EAB308",
@@ -44,11 +48,13 @@ export function AntDConfig({ children }: AntDConfigProps) {
             },
             Pagination: {
               itemActiveBg: "#FACC14",
-              itemActiveColor: "##364049",
+              itemActiveColor: "#364049",
               itemActiveColorHover: "#364049",
             },
             Button: {
-              primaryColor: "#364049",
+              defaultBg: "#FACC14",
+              defaultBorderColor: "#FACC14",
+              defaultColor: "#364049",
             },
           },
         }}

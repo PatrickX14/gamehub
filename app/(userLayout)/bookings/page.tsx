@@ -6,6 +6,8 @@ import timezone from "dayjs/plugin/timezone.js";
 import utc from "dayjs/plugin/utc.js";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { Empty } from "antd";
+import { SectionCard } from "@/components/Cards";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -15,6 +17,7 @@ export default async function BookingPage() {
   const accessToken = cookieStore.get("accessToken");
   if (!accessToken) {
     redirect("/login");
+    // throw new Error("Access Token is missing");
   }
   const reservations = await getUserReservations(accessToken.value);
 
@@ -35,34 +38,10 @@ export default async function BookingPage() {
               </h2>
               <p className="text-secondary text-sm">View your order history</p>
             </div>
-
-            {/* Tabs */}
-            {/* <div className="flex bg-[#F9FAFB] p-1 rounded-lg border border-[#364049]/10">
-              <button
-                onClick={() => setActiveTab("upcoming")}
-                className={`px-4 py-2 rounded-md font-semibold text-sm transition-all ${
-                  activeTab === "upcoming"
-                    ? "bg-white text-primary shadow-sm"
-                    : "text-secondary hover:text-primary"
-                }`}
-              >
-                Upcoming
-              </button>
-              <button
-                onClick={() => setActiveTab("past")}
-                className={`px-4 py-2 rounded-md font-semibold text-sm transition-all ${
-                  activeTab === "past"
-                    ? "bg-white text-primary shadow-sm"
-                    : "text-secondary hover:text-primary"
-                }`}
-              >
-                Past
-              </button>
-            </div> */}
           </div>
 
           <div className="flex flex-col gap-6">
-            {reservations ? (
+            {reservations.length > 0 ? (
               reservations.map((reservation) => (
                 <BookingInfo
                   key={reservation.id}
@@ -70,19 +49,20 @@ export default async function BookingPage() {
                   storeAddress={reservation.merchantAddress}
                   startAt={dayjs(reservation.startAt)
                     .tz("Asia/Bangkok")
-                    .format("D/MMMM/YYYY hh:mm")}
+                    .format("D/MMMM/YYYY HH:mm")}
                   endAt={dayjs(reservation.endAt)
                     .tz("Asia/Bangkok")
-                    .format("D/MMMM/YYYY hh:mm")}
-                  mapUrl={""}
+                    .format("D/MMMM/YYYY HH:mm")}
                   status={reservation.status}
                   boardgameName={reservation.boardgameName}
+                  createdAt={dayjs(reservation.createdAt)
+                    .tz("Asia/Bangkok")
+                    .format("D/MMMM/YYYY HH:mm")}
+                  reservationId={reservation.id}
                 />
               ))
             ) : (
-              <div className="text-center py-12 text-secondary bg-[#F9FAFB] rounded-md border border-dashed border-[#364049]/20">
-                <p>No bookings found.</p>
-              </div>
+              <Empty description={"There are no reservations"} />
             )}
           </div>
         </div>

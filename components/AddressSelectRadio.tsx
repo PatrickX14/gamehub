@@ -1,24 +1,21 @@
 "use client";
-import { getMe, AddressBody } from "@/app/lib/api/user";
-import { getLocalStorageItem } from "@/app/lib/api/utils";
-import { Radio } from "antd";
-import { useEffect, useState } from "react";
+import { AddressBody } from "@/app/lib/api/user";
+import { Radio, RadioChangeEvent } from "antd";
 import { SectionCard } from "./Cards";
+import Link from "next/link";
 
-export function AddressSelectRadio() {
-  const [addresses, setAddresses] = useState<AddressBody[]>([]);
-  const [selected, setSelected] = useState<number>();
+type AddressSelectRadioProps = {
+  addresses: AddressBody[];
+  isAddressSelected: (selectedId: number) => void;
+};
 
-  useEffect(() => {
-    async function fetchAddress() {
-      const accessToken = await getLocalStorageItem("accessToken");
-      if (!accessToken) return;
-      const data = await getMe(accessToken);
-      if (!data) return;
-      setAddresses(data.addresses.items);
-    }
-    fetchAddress();
-  }, []);
+export function AddressSelectRadio({
+  addresses,
+  isAddressSelected,
+}: AddressSelectRadioProps) {
+  function handleAddressSelect(event: RadioChangeEvent) {
+    isAddressSelected(event.target.value);
+  }
 
   return (
     <SectionCard
@@ -26,11 +23,7 @@ export function AddressSelectRadio() {
       description={"Choose a delivery address"}
     >
       {addresses.length > 0 ? (
-        <Radio.Group
-          value={selected}
-          onChange={(e) => setSelected(e.target.value)}
-          className="w-full"
-        >
+        <Radio.Group onChange={handleAddressSelect} className="w-full">
           <div className="flex flex-col gap-4">
             {addresses.map(
               ({
@@ -67,7 +60,17 @@ export function AddressSelectRadio() {
           </div>
         </Radio.Group>
       ) : (
-        <p className="text-muted text-sm italic">No addresses available.</p>
+        <>
+          <p className="text-muted text-sm italic mb-5">
+            No addresses available.
+          </p>
+          <Link
+            href={"/profile/newaddress"}
+            className="block mx-auto w-50 bg-[#FACC14] hover:bg-[#E7B008] py-1 rounded-md font-semibold text-center text-primary cursor-pointer transition-colors"
+          >
+            Add new address
+          </Link>
+        </>
       )}
     </SectionCard>
   );

@@ -1,3 +1,4 @@
+import { forbidden, notFound } from "next/navigation";
 import { refreshToken } from "../utils";
 
 const API_URL = process.env.API_URL ?? "http://localhost:3000";
@@ -24,10 +25,12 @@ export type BookingItem = {
   id: number;
   merchantName: string;
   merchantAddress: string;
+  paymentId: number;
   status: BookingStatus;
   boardgameName: string;
   startAt: string;
   endAt: string;
+  createdAt: string;
 };
 
 type ReservationsResponse = {
@@ -46,10 +49,46 @@ export async function getUserReservations(
     },
   });
   if (!res.ok) {
-    throw new Error("Failed to fetch user reservations");
+    console.log(res.status, res.statusText);
+    throw new Error(res.statusText);
   }
   const reservations: ReservationsResponse = await res.json();
   return reservations.items;
+}
+
+export type ReservationResponse = {
+  id: number;
+  merchantName: string;
+  pricePerHour: number;
+  totalPrice: number;
+  boardgameName: string;
+  tableSize: number;
+  startAt: string;
+  endAt: string;
+  createdAt: string;
+};
+
+export async function getReservationById(
+  accessToken: string,
+  reservationId: number,
+): Promise<ReservationResponse> {
+  const res: Response = await fetch(
+    `${API_URL}/reservations/${reservationId}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    },
+  );
+  if (!res.ok) {
+    throw new Error(res.statusText);
+  }
+  if (res.status === 404) {
+    notFound();
+  }
+  return await res.json();
 }
 
 export type BoardgameData = {
@@ -213,4 +252,95 @@ export async function getMerchantOptions(
         (err instanceof Error ? err.message : String(err)),
     );
   }
+}
+
+type ReservationStatus =
+  | "PENDING_APPROVAL"
+  | "APPROVED"
+  | "REJECTED"
+  | "CANCELLED";
+
+type Reservation = {
+  id: number;
+  userId: number;
+  gameId: number;
+  shopId: number;
+  gameTableId: number;
+  partyId: number | null;
+  note: string | null;
+  startAt: string;
+  endAt: string;
+  status: ReservationStatus;
+  createdAt: string;
+};
+
+type CreateReservationResponse = {
+  message: string;
+  reservation: Reservation;
+};
+
+export async function createReservation(
+  accessToken: string,
+  merchantId: number,
+  boardgameId: number,
+  startAt: string,
+  playerCount: number,
+): Promise<CreateReservationResponse> {
+  const res: Response = await fetch(`${API_URL}/reservations`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({
+      merchantId,
+      boardgameId,
+      startAt,
+      playerCount,
+    }),
+  });
+  if (!res.ok) {
+    throw new Error("Failed to create reservation");
+  }
+  return await res.json();
+}
+
+// Hardcoded for now, will be dynamic later
+type DemoReservationBody = {
+  paymentMethod: string;
+  cvv: string;
+  cardNumber: string;
+  expiryDate: string;
+  cardHolderName: string;
+  createParty?: boolean | undefined;
+  partyDescription?: string | undefined;
+  partyMemberCount?: number | undefined;
+};
+
+export async function payReservation(
+  accessToken: string,
+  reservationId: number,
+  demoReservationBody: DemoReservationBody,
+): Promise<{ message: string } | null> {
+  const requestBody = JSON.stringify({
+    ...demoReservationBody,
+    cardNumber: demoReservationBody.cardNumber.replace(/\s/g, ""),
+  });
+  const res: Response = await fetch(
+    `${API_URL}/reservations/${reservationId}/payments`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: requestBody,
+    },
+  );
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null);
+    throw new Error(errorData?.message || res.statusText);
+  }
+  return await res.json();
 }

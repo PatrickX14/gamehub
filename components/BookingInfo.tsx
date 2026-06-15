@@ -2,8 +2,10 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { BookingStatus } from "@/app/lib/api/users/reservation";
 import { Tag } from "antd";
+import Link from "next/link";
 
 export interface BookingInfoProps {
+  reservationId: number;
   boardgameName: string;
   storeName: string;
   storeAddress: string;
@@ -11,6 +13,7 @@ export interface BookingInfoProps {
   endAt: string;
   mapUrl?: string;
   status?: BookingStatus;
+  createdAt: string;
 }
 
 export default function BookingInfo({
@@ -18,9 +21,10 @@ export default function BookingInfo({
   storeAddress,
   startAt,
   endAt,
-  mapUrl,
   status,
   boardgameName,
+  createdAt,
+  reservationId,
 }: BookingInfoProps) {
   const isPast = status === "COMPLETED";
 
@@ -58,6 +62,8 @@ export default function BookingInfo({
 
       <h2 className="text-2xl font-bold text-primary mb-6 pr-32">
         {boardgameName}
+
+        <p className="text-sm text-secondary">{createdAt}</p>
       </h2>
 
       <div className="flex flex-col gap-6">
@@ -102,14 +108,12 @@ export default function BookingInfo({
         {/* Payment Button */}
         {status === "AWAITING_PAYMENT" ? (
           <div className="mt-4 flex justify-end border-t border-[#364049]/10 pt-6">
-            <a
-              href={mapUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href={`/reservationpayment/${reservationId}`}
               className={`flex items-center justify-center gap-2 w-full sm:w-max font-bold py-2 px-3 rounded-md transition-colors shadow-sm cursor-pointer bg-[#FACC14] hover:bg-[#eab308] text-[#364049]`}
             >
               Confirm & Pay
-            </a>
+            </Link>
           </div>
         ) : null}
       </div>

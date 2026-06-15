@@ -1,15 +1,15 @@
 import Image from "next/image";
 import PersonIcon from "@mui/icons-material/Person";
+import StoreIcon from "@mui/icons-material/Store";
 
 export type PartyStatus =
-  | "Gathering"
+  | "OPEN"
   | "Booked"
   | "Full"
   | "In Progress"
   | "Completed";
 
 export interface PartyCardProps {
-  gameImageUrl: string;
   gameName: string;
   hostName: string;
   location: string;
@@ -24,7 +24,7 @@ export interface PartyCardProps {
 }
 
 const STATUS_STYLES: Record<PartyStatus, string> = {
-  Gathering: "bg-blue-100 text-blue-600",
+  OPEN: "bg-blue-100 text-blue-600",
   Booked: "bg-green-100 text-green-600",
   Full: "bg-red-100 text-red-500",
   "In Progress": "bg-yellow-100 text-yellow-600",
@@ -32,7 +32,6 @@ const STATUS_STYLES: Record<PartyStatus, string> = {
 };
 
 export function PartyCard({
-  gameImageUrl,
   gameName,
   hostName,
   location,
@@ -54,21 +53,12 @@ export function PartyCard({
       onClick={onClick}
       className="w-full text-left bg-white rounded-2xl border border-gray-200 shadow-sm transition-transform duration-150 ease-in-out hover:-translate-y-2 hover:shadow-md flex items-stretch overflow-hidden cursor-pointer"
     >
-      {/* Game thumbnail */}
-      <div className="relative w-24 shrink-0">
-        <Image
-          src={gameImageUrl}
-          alt={gameName}
-          fill
-          className="object-cover"
-        />
-      </div>
-
       {/* Info section */}
       <div className="flex flex-col justify-center gap-1 px-4 py-3 flex-1 min-w-0">
-        <p className="text-[#364049] font-bold text-base leading-tight">
-          {gameName}
-        </p>
+        <div className="flex items-center gap-2 ">
+          <StoreIcon sx={{ color: "#FACC14" }} />
+          <h2 className="text-2xl font-semibold text-[#364049]">{gameName}</h2>
+        </div>
         <p className="text-sm text-[#627384]">
           Hosted by:{" "}
           <span className="text-[#364049] font-medium">{hostName}</span>

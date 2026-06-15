@@ -1,8 +1,8 @@
 "use client";
-import { Button, GetProp, notification, Select, SelectProps } from "antd";
+import { GetProp, notification, Select, SelectProps } from "antd";
 import { SectionCard } from "./Cards";
 import { TextInput } from "./Input";
-import { SyntheticEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   addBoardGame,
   BoardGameData,
@@ -10,6 +10,7 @@ import {
 } from "@/app/lib/api/admin/boardgames";
 import { getLocalStorageItem } from "@/app/lib/api/utils";
 import { debounce } from "@/app/lib/debounce";
+import { MerchantSuccessGameAddedModal } from "./MerchantSuccessGameAddedModal";
 
 type GameOptions = GetProp<SelectProps, "options">;
 type SelectedGameData = {
@@ -21,6 +22,7 @@ type SelectedGameData = {
 };
 
 export function AdminNewGameForm() {
+  const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [gameOptions, setOptions] = useState<GameOptions | []>([]);
   const [query, setQuery] = useState<string>("");
 
@@ -71,18 +73,16 @@ export function AdminNewGameForm() {
     const accessToken = await getLocalStorageItem("accessToken");
     if (!accessToken) return;
     await addBoardGame(accessToken, boardgameId, quantity);
-    api.info({
-      placement: "topRight",
-      title: "Board game added",
-      description: `${quantity} ${selectedData.name} have been added to you shop`,
-      pauseOnHover: true,
-      showProgress: true,
-    });
+    setModalOpen(true);
   }
 
   return (
     <SectionCard title={"Add game"} description={""}>
       {notificationContext}
+      <MerchantSuccessGameAddedModal
+        isOpen={isModalOpen}
+        onCloseClick={() => setModalOpen(false)}
+      />
       <div className="grid grid-cols-2 gap-4">
         <div>
           <p className="text-sm mb-0.5 text-secondary">Game</p>

@@ -93,9 +93,11 @@ interface AddressCardProps {
   address: string;
   secondLineAddress: string;
   adminMode?: boolean;
+  hideEdit?: boolean;
+  hideLabel?: boolean;
 }
 
-function AddressCard({
+export function AddressCard({
   address,
   addressLabel,
   id,
@@ -103,19 +105,24 @@ function AddressCard({
   phoneNumber,
   secondLineAddress,
   adminMode,
+  hideEdit,
+  hideLabel,
 }: AddressCardProps) {
   return (
     <div className="flex">
       {/* details */}
       <div className="flex-1">
-        {adminMode ? null : (
-          <>
+        <>
+          {hideLabel ? null : (
             <p className="text-xl text-primary font-bold">{addressLabel}</p>
+          )}
+
+          {adminMode ? null : (
             <p className="my-2 text-primary">
               {name} | {phoneNumber}
             </p>
-          </>
-        )}
+          )}
+        </>
         <p className={`${adminMode ? "text-primary" : "text-secondary"}`}>
           {address}
         </p>
@@ -125,7 +132,7 @@ function AddressCard({
       </div>
       {/* edit button */}
       <div className="flex items-center mb-4">
-        {adminMode ? (
+        {hideEdit ? null : adminMode ? (
           <Link
             href={`/admin/shopinfo/address/${id}`}
             className="flex items-center bg-[#FACC14] hover:bg-[#E7B008]/80 px-4 py-2 rounded-md "

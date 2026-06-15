@@ -56,7 +56,7 @@ export type BoardgameStockData = {
 export async function getBoardGameStock(
   accessToken: string,
   retry: number = 0,
-): Promise<BoardgameStockData[] | null> {
+): Promise<BoardgameStockData[]> {
   if (!accessToken) {
     throw new Error("Access token is missing");
   }
@@ -79,7 +79,7 @@ export async function getBoardGameStock(
     const data = await res.json();
     return data.items;
   } catch (err) {
-    return null;
+    throw new Error("Failed to fetch board game stock");
   }
 }
 

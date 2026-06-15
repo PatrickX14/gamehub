@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import styles from "./page.module.css";
 import "./globals.css";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
+import { AntDConfig } from "@/components/AntDConfig";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,10 +29,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AppRouterCacheProvider>
-          <main>
-            {/* content */}
-            <div className="bg-[#EEF2F6] h-screen">{children}</div>
-          </main>
+          <AntDConfig>
+            <main>
+              {/* content */}
+              <div className="bg-[#EEF2F6] h-screen">{children}</div>
+            </main>
+          </AntDConfig>
         </AppRouterCacheProvider>
       </body>
     </html>

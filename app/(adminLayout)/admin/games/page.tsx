@@ -1,34 +1,23 @@
-"use client";
-import { useEffect, useState } from "react";
 import { GamesTable } from "@/components/AdminTable";
-import { getLocalStorageItem } from "@/app/lib/api/utils";
-import {
-  BoardgameStockData,
-  getBoardGameStock,
-} from "@/app/lib/api/admin/boardgames";
+import { getBoardGameStock } from "@/app/lib/api/admin/boardgames";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-export default function AdminGamesPage() {
-  const [gamesData, setGamesData] = useState<BoardgameStockData[]>([]);
-
-  useEffect(() => {
-    const fetchGamesData = async () => {
-      try {
-        const accessToken = await getLocalStorageItem("accessToken");
-        if (!accessToken) return;
-        const data = await getBoardGameStock(accessToken);
-        if (!data) return;
-        setGamesData(data);
-      } catch (error) {
-        console.error("Error fetching games data:", error);
-      }
-    };
-
-    fetchGamesData();
-  }, []);
+export default async function AdminGamesPage() {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken");
+  if (!accessToken) {
+    redirect("/login");
+  }
+  const gamesData = await getBoardGameStock(accessToken.value);
 
   return (
     <div>
-      <GamesTable tableTitle={"Games"} data={gamesData} itemsPerPage={0} />
+      <GamesTable
+        tableTitle={"Games"}
+        data={gamesData?.length > 0 ? gamesData : null}
+        itemsPerPage={0}
+      />
     </div>
   );
 }

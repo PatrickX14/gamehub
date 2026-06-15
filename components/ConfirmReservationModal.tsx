@@ -1,41 +1,32 @@
 "use client";
 import { Modal, Result, Button } from "antd";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 export type ConfirmReservationModalProps = {
   isOpen?: boolean;
+  onClose: () => void;
 };
 
 export function ConfirmReservationModal({
-  isOpen = false,
+  isOpen,
+  onClose,
 }: ConfirmReservationModalProps) {
   const router = useRouter();
-  const [isModalOpen, setIsModalOpen] = useState(isOpen);
-
+  console.log(isOpen);
   return (
-    <Modal
-      open={isModalOpen}
-      closeIcon={null}
-      footer={null}
-      onCancel={() => setIsModalOpen(false)}
-      centered
-    >
+    <Modal open={isOpen} closeIcon={null} footer={null} centered>
       <Result
         status="success"
-        title="Successfully Make Reserved Table!"
+        title="Successfully Reserved Table!"
         subTitle={
           <div>
             <p>Reservation number: 2</p>
-            <p>Cloud server configuration takes 1-5 minutes, please wait.</p>
+            <p>Localtion: </p>
+            <p>Boardgame: </p>
           </div>
         }
         extra={[
-          <Button
-            type="default"
-            key="closeButton"
-            onClick={() => setIsModalOpen(false)}
-          >
+          <Button type="default" key="closeButton" onClick={onClose}>
             Close
           </Button>,
           <Button
@@ -45,8 +36,13 @@ export function ConfirmReservationModal({
           >
             Go to reservations
           </Button>,
+          // <div key="createParty">
+          //   <p className="text-center text-secondary my-2">or</p>
+          //   <Button type="primary">Create a party</Button>
+          // </div>,
         ]}
       />
+      {/* Create party */}
     </Modal>
   );
 }

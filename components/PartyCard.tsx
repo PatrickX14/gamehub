@@ -3,7 +3,8 @@ import LocationPinIcon from "@mui/icons-material/LocationPin";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import GroupIcon from "@mui/icons-material/Group";
 
-type PartyCardProps = {
+export type PartyCardProps = {
+  partyId: number;
   gameName: string;
   hostName: string;
   location: string;
@@ -12,9 +13,11 @@ type PartyCardProps = {
   maxMembers: number;
   status: string;
   onJoin?: () => void;
+  hideJoinButton?: boolean;
 };
 
 export function PartyCard({
+  partyId,
   gameName,
   hostName,
   location,
@@ -23,13 +26,14 @@ export function PartyCard({
   maxMembers,
   status,
   onJoin,
+  hideJoinButton,
 }: PartyCardProps) {
   const fillPercent = Math.min((currentMembers / maxMembers) * 100, 100);
   const isFull = currentMembers >= maxMembers;
   const statusStyle: Record<string, string> = {
-    Booked: "bg-blue-100 text-blue-600",
-    Gathering: "bg-green-100 text-green-600",
-    Full: "bg-red-100 text-red-500",
+    OPEN: "bg-blue-100 text-blue-600",
+    FULL: "bg-green-100 text-green-600",
+    CLOSED: "bg-red-100 text-red-500",
   };
   return (
     <div className="bg-[#F9FAFB] rounded-2xl p-3 shadow-xl">
@@ -89,17 +93,19 @@ export function PartyCard({
         </div>
       </div>
       {/* Join button */}
-      <button
-        onClick={onJoin}
-        disabled={isFull}
-        className={`w-full mt-4 py-2 rounded-xl font-semibold text-sm transition-all duration-200 ${
-          isFull
-            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-            : "bg-[#FACC14] text-primary hover:bg-[#EAB308] cursor-pointer"
-        }`}
-      >
-        {isFull ? "Party Full" : "Join Party"}
-      </button>
+      {hideJoinButton ? null : (
+        <button
+          onClick={onJoin}
+          disabled={isFull}
+          className={`w-full mt-4 py-2 rounded-xl font-semibold text-sm transition-all duration-200 ${
+            isFull
+              ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+              : "bg-[#FACC14] text-primary hover:bg-[#EAB308] cursor-pointer"
+          }`}
+        >
+          {isFull ? "Party Full" : "Join Party"}
+        </button>
+      )}
     </div>
   );
 }

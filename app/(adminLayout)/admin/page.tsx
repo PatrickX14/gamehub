@@ -1,5 +1,5 @@
 import { AdminSalesBarChart } from "@/components/AdminSalesBarChart";
-import { OrdersTable } from "@/components/AdminTable";
+// import { OrdersTable } from "@/components/AdminTable";
 import AdminTopNotification from "@/components/AdminTopNotification";
 
 const demoData = [
@@ -106,11 +106,11 @@ export default function ShopIndexPage() {
     <div className="flex flex-col gap-5">
       <AdminTopNotification />
       <AdminSalesBarChart data={demoData} />
-      <OrdersTable
+      {/* <OrdersTable
         tableTitle={"Recent Orders"}
         itemsPerPage={10}
         data={demoTableData}
-      />
+      /> */}
     </div>
   );
 }

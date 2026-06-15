@@ -2,26 +2,24 @@
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { ChangeEvent, useState } from "react";
-import { DateInput, Select, TextInput } from "./Input";
+import { Select, TextInput } from "./Input";
 import { SectionCard } from "./Cards";
 import {
   ViewButton,
   EditButton,
   DeleteButton,
 } from "./AdminTableActionButtons";
+import { Party } from "@/app/lib/api/merchant/party";
+import Link from "next/link";
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone.js";
+import utc from "dayjs/plugin/utc.js";
 
-type PartyData = {
-  id: string | number;
-  hostName: string;
-  game: string;
-  status: string;
-  startAt: string;
-  endAt: string;
-  bookedAt: string;
-};
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 type MerchantPartyTableProps = {
-  data: PartyData[];
+  data: Party[];
   itemsPerPage?: number;
   tableTitle: string;
 };
@@ -50,14 +48,23 @@ export function MerchantPartyTable({
   }
 
   const filteredData = data.filter(
-    ({ hostName, id, game, status, startAt, endAt }) =>
-      game.toLocaleLowerCase().includes(queries.game.toLocaleLowerCase()) &&
+    ({
+      hostName,
+      id,
+      boardgameName,
+      reservationId,
+      status,
+      startAt,
+      createdAt,
+    }) =>
+      boardgameName
+        .toLocaleLowerCase()
+        .includes(queries.game.toLocaleLowerCase()) &&
       hostName.toLowerCase().includes(queries.name.toLowerCase()) &&
       (queries.id === "" || id.toString().includes(queries.id)) &&
       (queries.status === "" ||
         status.toLocaleLowerCase() === queries.status.toLocaleLowerCase()) &&
-      (queries.startAt === "" || startAt >= queries.startAt) &&
-      (queries.endAt === "" || endAt <= queries.endAt),
+      (queries.startAt === "" || startAt >= queries.startAt),
   );
 
   const totalPages = Math.ceil(filteredData.length / pageLimit);
@@ -113,6 +120,9 @@ export function MerchantPartyTable({
           <tr>
             <th className="px-4 py-2 text-left text-primary">Id</th>
             <th className="border-x border-gray-300 px-4 py-2 text-left text-primary">
+              Reservation Id
+            </th>
+            <th className="border-x border-gray-300 px-4 py-2 text-left text-primary">
               Host By
             </th>
             <th className="border-x border-gray-300 px-4 py-2 text-left text-primary">
@@ -125,9 +135,6 @@ export function MerchantPartyTable({
               Start At
             </th>
             <th className="border-x border-gray-300 px-4 py-2 text-left text-primary">
-              End At
-            </th>
-            <th className="border-x border-gray-300 px-4 py-2 text-left text-primary">
               Booked At
             </th>
             <th className="px-4 py-2 text-left text-primary">Action</th>
@@ -135,28 +142,41 @@ export function MerchantPartyTable({
         </thead>
         <tbody>
           {pagedData.map(
-            ({ id, hostName, game, status, startAt, endAt, bookedAt }) => (
+            ({
+              id,
+              reservationId,
+              hostName,
+              boardgameName,
+              status,
+              startAt,
+              createdAt,
+            }) => (
               <tr key={id} className="group">
                 <td className="border-gray-300 px-4 py-2 text-left text-primary">
                   {id}
                 </td>
                 <td className="border-gray-300 px-4 py-2 text-left text-primary">
+                  <Link
+                    href={`/admin/reservations/${reservationId}`}
+                    className="text-blue-800 underline"
+                  >
+                    {reservationId}
+                  </Link>
+                </td>
+                <td className="border-gray-300 px-4 py-2 text-left text-primary">
                   {hostName}
                 </td>
                 <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                  {game}
+                  {boardgameName}
                 </td>
                 <td className="border-gray-300 px-4 py-2 text-left text-primary">
                   {status}
                 </td>
                 <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                  {formatDate(startAt)}
+                  {dayjs.tz(startAt).format("DD/MM/YYYY HH:mm")}
                 </td>
                 <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                  {formatDate(endAt)}
-                </td>
-                <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                  {formatDate(bookedAt)}
+                  {dayjs.tz(createdAt).format("DD/MM/YYYY HH:mm")}
                 </td>
                 {/* Action buttons */}
                 <td className="border-gray-300 px-4 py-2 text-left text-primary">

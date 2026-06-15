@@ -38,3 +38,13 @@ body {
 .animate-modal-in {
   animation: modal-in 0.18s ease-out both;
 }
+
+.ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #facc14 !important;
+  border-color: #facc14 !important;
+}
+
+.ant-checkbox-wrapper:hover .ant-checkbox-checked .ant-checkbox-inner,
+.ant-checkbox:hover .ant-checkbox-inner {
+  border-color: #facc14 !important;
+}
