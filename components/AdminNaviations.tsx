@@ -15,13 +15,19 @@ import {
   TableBar,
   Liquor,
 } from "@mui/icons-material";
-import { usePathname } from "next/navigation";
-
+import { usePathname, useRouter } from "next/navigation";
+import LogoutIcon from "@mui/icons-material/Logout";
 export function Navigations() {
   const pathname = usePathname();
+  const router = useRouter();
   const [settingsExpanded, setSettingsExpanded] = useState(
     pathname.startsWith("/admin/settings"),
   );
+
+  const handleLogout = () => {
+    router.push("/login");
+  };
+
   const links: { title: string; link: string; icon: ReactNode }[] = [
     { title: "Overall", link: "/admin", icon: <Summarize /> },
     { title: "Orders", link: "/admin/orders", icon: <ListAlt /> },
@@ -30,6 +36,7 @@ export function Navigations() {
     { title: "Reservations", link: "/admin/reservations", icon: <TableBar /> },
     { title: "Parties", link: "/admin/parties", icon: <Liquor /> },
     { title: "Settings", link: "/admin", icon: <Settings /> },
+    { title: "Logout", link: "/login", icon: <LogoutIcon color="error" /> },
   ];
   return (
     <div className="px-2">
@@ -76,6 +83,17 @@ export function Navigations() {
                   </Link>
                 </div>
               )}
+            </div>
+          );
+        } else if (title === "Logout") {
+          return (
+            <div
+              key={title}
+              onClick={handleLogout}
+              className="flex gap-2 items-center hover:bg-red-200 p-2 rounded-md cursor-pointer"
+            >
+              {icon}
+              <p className="text-primary text-md">{title}</p>
             </div>
           );
         } else {

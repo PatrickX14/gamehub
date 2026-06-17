@@ -13,10 +13,16 @@ type Merchant = {
   location: string;
 };
 
-type Member = {
+export type MemberStatus = "ACEPTED" | "PENDING" | "REJECTED";
+
+export type PartyMember = {
   id: number;
   name: string;
   lastName: string;
+  imageUrl: string;
+  joinedAt: string;
+  status: MemberStatus;
+  isHost?: boolean;
 };
 
 export type Session = {
@@ -27,7 +33,7 @@ export type Session = {
   description: string;
   boardgame: Boardgame;
   merchant: Merchant;
-  members: Member[];
+  members: PartyMember[];
   startAt?: string;
   endAt?: string;
 };
@@ -55,14 +61,14 @@ export async function getAllParties(
   return response.json();
 }
 
-type Party = {
+export type Party = {
   id: number;
   description: string;
   hostName: string;
   maxPlayers: number;
   startAt: string;
   endAt: string;
-  members: Member[];
+  members: PartyMember[];
   merchant: Merchant;
   status: PartyStatus;
   boardgame: Boardgame;

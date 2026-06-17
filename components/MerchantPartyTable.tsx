@@ -2,18 +2,15 @@
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { ChangeEvent, useState } from "react";
-import { Select, TextInput } from "./Input";
+import { DateInput, Select, TextInput } from "./Input";
 import { SectionCard } from "./Cards";
-import {
-  ViewButton,
-  EditButton,
-  DeleteButton,
-} from "./AdminTableActionButtons";
 import { Party } from "@/app/lib/api/merchant/party";
-import Link from "next/link";
+// import Link from "next/link";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone.js";
 import utc from "dayjs/plugin/utc.js";
+import { Tag } from "antd";
+import { useRouter } from "next/navigation";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -29,6 +26,7 @@ export function MerchantPartyTable({
   itemsPerPage,
   tableTitle,
 }: MerchantPartyTableProps) {
+  const router = useRouter();
   const [pageNumber, setPageNumber] = useState<number>(0);
   const [pageLimit] = useState<number>(itemsPerPage || 20);
   const [queries, setQueries] = useState({
@@ -38,6 +36,7 @@ export function MerchantPartyTable({
     startAt: "",
     endAt: "",
     game: "",
+    bookedAt: "",
   });
 
   function handleQueryChange(key: keyof typeof queries) {
@@ -48,15 +47,7 @@ export function MerchantPartyTable({
   }
 
   const filteredData = data.filter(
-    ({
-      hostName,
-      id,
-      boardgameName,
-      reservationId,
-      status,
-      startAt,
-      createdAt,
-    }) =>
+    ({ hostName, id, boardgameName, status, startAt, createdAt }) =>
       boardgameName
         .toLocaleLowerCase()
         .includes(queries.game.toLocaleLowerCase()) &&
@@ -64,7 +55,8 @@ export function MerchantPartyTable({
       (queries.id === "" || id.toString().includes(queries.id)) &&
       (queries.status === "" ||
         status.toLocaleLowerCase() === queries.status.toLocaleLowerCase()) &&
-      (queries.startAt === "" || startAt >= queries.startAt),
+      (queries.startAt === "" || startAt.includes(queries.startAt)) &&
+      (queries.bookedAt === "" || createdAt.includes(queries.bookedAt)),
   );
 
   const totalPages = Math.ceil(filteredData.length / pageLimit);
@@ -73,17 +65,19 @@ export function MerchantPartyTable({
     (pageNumber + 1) * pageLimit,
   );
 
-  function formatDate(dateStr: string) {
-    return new Date(dateStr).toLocaleString("en-GB", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-    });
-  }
+  const statusFilter = data.reduce<string[]>((prevArray, { status }) => {
+    if (!prevArray.includes(status)) {
+      prevArray.push(status);
+    }
+    return prevArray;
+  }, []);
+
+  const gameFilter = data.reduce<string[]>((prevData, { boardgameName }) => {
+    if (!prevData.includes(boardgameName)) {
+      prevData.push(boardgameName);
+    }
+    return prevData;
+  }, []);
 
   return (
     <SectionCard title={tableTitle} description={""}>
@@ -91,25 +85,30 @@ export function MerchantPartyTable({
       <div className="flex justify-between">
         <div className="flex gap-2 mb-2">
           <TextInput
-            name="id"
-            label="Party ID"
-            onChange={handleQueryChange("id")}
-          />
-          <TextInput
             name="name"
             label="Host name"
             onChange={handleQueryChange("name")}
           />
-          <TextInput
-            name="game"
-            label="Game"
-            onChange={handleQueryChange("game")}
-          />
           {/* Status filter */}
           <Select
-            options={["All Status", "Active", "Inactive"]}
+            options={["All Status", ...statusFilter]}
             onChange={handleQueryChange("status")}
             label={"Status"}
+          />
+
+          <Select
+            options={["All games", ...gameFilter]}
+            onChange={handleQueryChange("game")}
+            label={"Games"}
+          />
+          {/* 
+          <DateInput
+            onChange={handleQueryChange("startAt")}
+            label={"Start at"}
+          /> */}
+          <DateInput
+            onChange={handleQueryChange("bookedAt")}
+            label={"Booked at"}
           />
         </div>
       </div>
@@ -120,9 +119,6 @@ export function MerchantPartyTable({
           <tr>
             <th className="px-4 py-2 text-left text-primary">Id</th>
             <th className="border-x border-gray-300 px-4 py-2 text-left text-primary">
-              Reservation Id
-            </th>
-            <th className="border-x border-gray-300 px-4 py-2 text-left text-primary">
               Host By
             </th>
             <th className="border-x border-gray-300 px-4 py-2 text-left text-primary">
@@ -132,36 +128,20 @@ export function MerchantPartyTable({
               Status
             </th>
             <th className="border-x border-gray-300 px-4 py-2 text-left text-primary">
-              Start At
-            </th>
-            <th className="border-x border-gray-300 px-4 py-2 text-left text-primary">
               Booked At
             </th>
-            <th className="px-4 py-2 text-left text-primary">Action</th>
           </tr>
         </thead>
         <tbody>
           {pagedData.map(
-            ({
-              id,
-              reservationId,
-              hostName,
-              boardgameName,
-              status,
-              startAt,
-              createdAt,
-            }) => (
-              <tr key={id} className="group">
+            ({ id, hostName, boardgameName, status, createdAt }) => (
+              <tr
+                key={id}
+                className="group cursor-pointer hover:bg-gray-500/15"
+                onClick={() => router.push(`/admin/parties/${id}`)}
+              >
                 <td className="border-gray-300 px-4 py-2 text-left text-primary">
                   {id}
-                </td>
-                <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                  <Link
-                    href={`/admin/reservations/${reservationId}`}
-                    className="text-blue-800 underline"
-                  >
-                    {reservationId}
-                  </Link>
                 </td>
                 <td className="border-gray-300 px-4 py-2 text-left text-primary">
                   {hostName}
@@ -170,22 +150,23 @@ export function MerchantPartyTable({
                   {boardgameName}
                 </td>
                 <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                  {status}
-                </td>
-                <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                  {dayjs.tz(startAt).format("DD/MM/YYYY HH:mm")}
+                  <Tag
+                    variant="solid"
+                    color={
+                      status === "OPEN"
+                        ? "green"
+                        : status === "CLOSED"
+                          ? "red"
+                          : "gold"
+                    }
+                  >
+                    {status}
+                  </Tag>
                 </td>
                 <td className="border-gray-300 px-4 py-2 text-left text-primary">
                   {dayjs.tz(createdAt).format("DD/MM/YYYY HH:mm")}
                 </td>
                 {/* Action buttons */}
-                <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                  <div className="flex gap-1">
-                    <ViewButton segment="parties" param={id} />
-                    <EditButton segment="parties" param={id} />
-                    <DeleteButton id={id} />
-                  </div>
-                </td>
               </tr>
             ),
           )}

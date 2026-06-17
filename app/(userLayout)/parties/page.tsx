@@ -72,6 +72,7 @@ export default async function PartiesPage() {
     status: party.status as PartyCardProps["status"],
     currentMembers: party.members.length,
   }));
+
   return (
     <div className="xl:px-30 grid grid-cols-1 lg:grid-cols-3 gap-4">
       {/* profile menu */}
@@ -79,7 +80,7 @@ export default async function PartiesPage() {
         <ProfileMenu selectedMenu={"Parties"} />
       </div>
       <div className="lg:col-span-2">
-        <UserPartyList partiesData={mappedPartiesData} />
+        <UserPartyList partiesData={parties.items} />
       </div>
     </div>
   );

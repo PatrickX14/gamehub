@@ -1,7 +1,7 @@
 "use client";
 import { ProductData, getProducts } from "@/app/lib/api/admin/products";
 import { getLocalStorageItem } from "@/app/lib/api/utils";
-import { ProductsTable } from "@/components/AdminTable";
+import { MerchantProductsTable } from "@/components/MerchantProductsTable";
 import { useEffect, useState } from "react";
 
 export default function AdminProductsPage() {
@@ -19,7 +19,7 @@ export default function AdminProductsPage() {
   }, []);
   return (
     <div>
-      <ProductsTable
+      <MerchantProductsTable
         tableTitle={"Products"}
         data={productData}
         itemsPerPage={0}

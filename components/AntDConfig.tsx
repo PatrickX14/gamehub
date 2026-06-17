@@ -55,6 +55,7 @@ export function AntDConfig({ children }: AntDConfigProps) {
               defaultBg: "#FACC14",
               defaultBorderColor: "#FACC14",
               defaultColor: "#364049",
+              primaryColor: "#364049",
             },
           },
         }}
