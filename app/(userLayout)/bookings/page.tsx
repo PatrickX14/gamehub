@@ -7,7 +7,6 @@ import utc from "dayjs/plugin/utc.js";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { Empty } from "antd";
-import { SectionCard } from "@/components/Cards";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
