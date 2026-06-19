@@ -62,6 +62,7 @@ export default async function PartiesPage() {
   }
 
   const parties = await getMyParties(accessToken.value);
+  console.log(parties);
   const mappedPartiesData: PartyCardProps[] = parties.items.map((party) => ({
     partyId: party.id,
     gameName: party.boardgame.name,

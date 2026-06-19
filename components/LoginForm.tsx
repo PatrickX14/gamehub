@@ -34,12 +34,12 @@ export function LoginForm() {
           className="bg-[#EEF2F6] py-3 px-2 rounded-lg"
         />
         <p className="text-sm text-center text-red-500">{state.error}</p>
-        <Link
-          href="/forgot-password"
+        {/* <Link
+          href="/forgotpassword"
           className="text-[#EEF2F6] self-end size-fit"
         >
           Forgot password?
-        </Link>
+        </Link> */}
         <button
           className="bg-[#FCCB1D] py-3 rounded-lg hover:cursor-pointer"
           type="submit"

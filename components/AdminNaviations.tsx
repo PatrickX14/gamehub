@@ -6,7 +6,7 @@ import {
   Settings,
   Inventory,
   ListAlt,
-  Summarize,
+  // Summarize,
   ExpandMore,
   ExpandLess,
   Store,
@@ -29,7 +29,7 @@ export function Navigations() {
   };
 
   const links: { title: string; link: string; icon: ReactNode }[] = [
-    { title: "Overall", link: "/admin", icon: <Summarize /> },
+    // { title: "Overall", link: "/admin", icon: <Summarize /> },
     { title: "Orders", link: "/admin/orders", icon: <ListAlt /> },
     { title: "Products", link: "/admin/products", icon: <Inventory /> },
     { title: "Games", link: "/admin/games", icon: <Casino /> },

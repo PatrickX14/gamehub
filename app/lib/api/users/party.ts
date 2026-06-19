@@ -13,7 +13,7 @@ type Merchant = {
   location: string;
 };
 
-export type MemberStatus = "ACEPTED" | "PENDING" | "REJECTED";
+export type MemberStatus = "ACCEPTED" | "PENDING" | "REJECTED";
 
 export type PartyMember = {
   id: number;
@@ -66,6 +66,7 @@ export type Party = {
   description: string;
   hostName: string;
   maxPlayers: number;
+  isUserHost: boolean;
   startAt: string;
   endAt: string;
   members: PartyMember[];
@@ -75,14 +76,14 @@ export type Party = {
   currentPlayers: number;
 };
 
-type CreatePartyResponse = {
+type MyPartyResponse = {
   total: number;
   items: Party[];
 };
 
 export async function getMyParties(
   accessToken: string,
-): Promise<CreatePartyResponse> {
+): Promise<MyPartyResponse> {
   const response = await fetch(`${API_URL}/parties/me`, {
     method: "GET",
     headers: {
@@ -110,6 +111,32 @@ export async function joinParty(accessToken: string, partyId: number) {
   if (!response.ok) {
     console.log(response);
     throw new Error("Failed to join parties");
+  }
+
+  return response.json();
+}
+
+export async function approvePartyMember(
+  accessToken: string,
+  partyId: number,
+  userId: number,
+  isApprove: boolean,
+) {
+  const response = await fetch(
+    `${API_URL}/parties/${partyId}/approve-request`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ userId, isApprove }),
+    },
+  );
+
+  if (!response.ok) {
+    console.log(response);
+    throw new Error("Failed to approve party member");
   }
 
   return response.json();

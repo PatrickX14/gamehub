@@ -6,55 +6,60 @@ import timezone from "dayjs/plugin/timezone.js";
 import utc from "dayjs/plugin/utc.js";
 import { useRouter } from "next/navigation";
 import { PartyMemberCard } from "./PartyMemberCard";
+import { PartyDetails } from "@/app/lib/api/merchant/party";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-const partyMembers = [
-  {
-    userImageUrl:
-      "https://api.dicebear.com/9.x/adventurer/svg?seed=MeepleHaven",
-    userName: "Member1",
-    joinedAt: "2026-06-17T13:07:08.138Z",
-    isHost: true,
-  },
-  {
-    userImageUrl:
-      "https://api.dicebear.com/9.x/adventurer/svg?seed=MeepleHaven",
-    userName: "Member2",
-    joinedAt: "2026-06-17T13:07:08.138Z",
-  },
-];
+type MerchantPartySummaryProps = {
+  partyData: PartyDetails;
+};
 
-export function MerchantPartySummary() {
+export function MerchantPartySummary({ partyData }: MerchantPartySummaryProps) {
   const router = useRouter();
   return (
     <SectionCard title={"Party summary"} description={""}>
-      <p className="text-primary">Hosted By: Kitjapong</p>
+      <p className="text-primary">Hosted By: {partyData.hostName}</p>
       <p className="text-primary">
         Party Status:{" "}
         <span>
-          <Tag variant="solid" color={"green"}>
-            Open
+          <Tag
+            variant="solid"
+            color={
+              partyData.status === "OPEN"
+                ? "green"
+                : partyData.status === "FULL"
+                  ? "orange"
+                  : "red"
+            }
+          >
+            {partyData.status}
           </Tag>
         </span>
       </p>
-      <p className="text-primary">Board Game: Gloomhaven</p>
+      <p className="text-primary">Board Game: {partyData.boardgameName}</p>
       <p className="text-primary">
-        Created At: {dayjs(new Date()).format("DD/MM/YYYY HH:mm")}
+        Created At: {dayjs(partyData.createdAt).format("DD/MM/YYYY HH:mm")}
       </p>
       {/* Party Members */}
       <div className="mt-6">
-        <p className="text-primary">Members: 2/4</p>
+        <p className="text-primary">
+          Members: {partyData.members.length}/{partyData.maxPlayers + 1}
+        </p>
         <div className="flex flex-col gap-3 mt-3">
-          {partyMembers.map(
-            ({ userImageUrl, userName, joinedAt, isHost }, index) => (
+          {partyData.members.map(
+            ({ userImageUrl, name, joinedAt, status }, index) => (
               <PartyMemberCard
                 key={index}
                 userImageUrl={userImageUrl}
-                userName={userName}
+                userName={name}
                 joinedAt={joinedAt}
-                isHost={isHost ? isHost : undefined}
+                partyId={0}
+                userId={0}
+                hostName={""}
+                status={status}
+                isHost={false}
+                accessToken={""}
               />
             ),
           )}

@@ -35,7 +35,7 @@ export async function login(
   if (data.role === "USER") {
     redirect("/");
   } else if (data.role === "SHOP") {
-    redirect("/admin");
+    redirect("/admin/orders");
   }
 
   return { error: null };
