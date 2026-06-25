@@ -1,50 +1,83 @@
 "use client";
-import { GetProp, Select, SelectProps } from "antd";
 import { SectionCard } from "./Cards";
-import { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
-
-type GameOptions = GetProp<SelectProps, "options">;
+import {
+  CreateSingleFacility,
+  DeleteSingleFacility,
+  Facility,
+} from "@/app/lib/api/merchant/facility";
+import { Input, notification } from "antd";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 type MerchantServiceManagementProps = {
-  serviceOptions: GameOptions;
+  serviceOptions: Facility[];
+  accessToken: string;
 };
 
 export function MerchantServiceManagement({
   serviceOptions,
+  accessToken,
 }: MerchantServiceManagementProps) {
-  const [selectedService, setSelectedService] = useState<string>("");
-  const [serviceList, setServiceList] = useState<string[]>([]);
+  const router = useRouter();
+  const [notificationApi, contextHolder] = notification.useNotification();
+  const [facilityInput, setFacilityInput] = useState<string>("");
+  async function handleAdd() {
+    if (facilityInput === "") {
+      return;
+    }
+    const res = await CreateSingleFacility(accessToken, facilityInput);
 
-  function handleSelect(id: number) {
-    const serviceData = serviceOptions.find(({ value }) => value === id);
-    if (!serviceData) return;
-    setSelectedService(serviceData.label as string);
+    if (res.ok) {
+      notificationApi.info({
+        placement: "topRight",
+        title: "Successfully added facility",
+        pauseOnHover: true,
+        showProgress: true,
+      });
+      setFacilityInput("");
+
+      router.refresh();
+    } else {
+      notificationApi.error({
+        placement: "topRight",
+        title: "Failed to create facility",
+        pauseOnHover: true,
+        showProgress: true,
+      });
+    }
   }
 
-  function handleAdd() {
-    if (selectedService === "") return;
-    if (serviceList.includes(selectedService)) return;
-    setServiceList((prev) => [...prev, selectedService]);
-  }
-
-  function handleDelete(serviceName: string) {
-    const deletedList = serviceList.filter((service) => service != serviceName);
-    setServiceList(deletedList);
+  async function handleDelete(facilityId: number) {
+    const res = await DeleteSingleFacility(accessToken, facilityId);
+    if (res.ok) {
+      notificationApi.info({
+        placement: "topRight",
+        title: "Successfully remove facility",
+        pauseOnHover: true,
+        showProgress: true,
+      });
+      router.refresh();
+    } else {
+      notificationApi.error({
+        placement: "topRight",
+        title: "Failed to remove facility",
+        pauseOnHover: true,
+        showProgress: true,
+      });
+    }
   }
 
   return (
     <SectionCard title={"Service Management"} description={""}>
+      {contextHolder}
       <p>Add New Service</p>
       {/* New service form*/}
       <div className="flex gap-3">
-        <Select
-          className="flex-1"
-          options={serviceOptions}
-          showSearch={{ optionFilterProp: "label" }}
-          allowClear
-          onSelect={handleSelect}
+        <Input
+          onChange={(event) => setFacilityInput(event.target.value)}
+          value={facilityInput}
         />
         <button
           className="w-30 h-9 bg-[#FACC14] rounded-md cursor-pointer"
@@ -58,11 +91,11 @@ export function MerchantServiceManagement({
       </div>
       {/* Service records */}
       <div className="mt-4 flex flex-col gap-4">
-        {serviceList.map((service, index) => (
+        {serviceOptions.map(({ id, name }) => (
           <ServiceRecord
-            key={index}
-            serviceName={service}
-            onDelete={handleDelete}
+            key={id}
+            serviceName={name}
+            onDelete={() => handleDelete(id)}
           />
         ))}
       </div>

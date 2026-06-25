@@ -6,32 +6,16 @@ import PeopleIcon from "@mui/icons-material/People";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useState } from "react";
 import { getLocalStorageItem } from "@/app/lib/api/utils";
-import { createTable, deleteTable } from "@/app/lib/api/merchant/tables";
+import { createTable, deleteTable, Table } from "@/app/lib/api/merchant/tables";
 import { notification } from "antd";
-
-type Table = {
-  players: number;
-  price: number;
-  id: number;
-  onTableDeleted: () => void;
-  api: ReturnType<typeof notification.useNotification>[0]; // 👈 add this
-};
+import { useRouter } from "next/navigation";
 
 type MerchantTableProps = {
-  tableData: {
-    id: number;
-    ownerId: number;
-    seats: number;
-    pricePerHour: string;
-    createdAt: string;
-  }[];
-  onTableCreated: () => void;
+  tableData: Table[];
 };
 
-export function MerchantTableManagement({
-  tableData,
-  onTableCreated,
-}: MerchantTableProps) {
+export function MerchantTableManagement({ tableData }: MerchantTableProps) {
+  const router = useRouter();
   const [seats, setSeats] = useState<number>(0);
   const [price, setPrice] = useState<number>(0);
   const [api, contextHolder] = notification.useNotification();
@@ -52,7 +36,7 @@ export function MerchantTableManagement({
           showProgress: true,
           pauseOnHover: true,
         });
-        onTableCreated();
+        router.refresh();
         return;
       } else {
         api.error({
@@ -98,24 +82,30 @@ export function MerchantTableManagement({
       </div>
       {/* Table records */}
       <div className="mt-4 flex flex-col gap-4">
-        {tableData
-          .sort(({ seats: a }, { seats: b }) => a - b)
-          .map(({ seats, pricePerHour, id }) => (
-            <TableRecord
-              players={seats}
-              price={+pricePerHour}
-              key={id}
-              onTableDeleted={() => onTableCreated()}
-              id={id}
-              api={api}
-            />
-          ))}
+        {tableData.map(({ seats, pricePerHour, id }) => (
+          <TableRecord
+            players={seats}
+            price={+pricePerHour}
+            key={id}
+            onTableDeleted={() => router.refresh()}
+            id={id}
+            api={api}
+          />
+        ))}
       </div>
     </SectionCard>
   );
 }
 
-function TableRecord({ players, price, id, onTableDeleted, api }: Table) {
+type TableReocrd = {
+  players: number;
+  price: number;
+  id: number;
+  onTableDeleted: () => void;
+  api: ReturnType<typeof notification.useNotification>[0]; // 👈 add this
+};
+
+function TableRecord({ players, price, id, onTableDeleted, api }: TableReocrd) {
   async function handleDelete(id: number) {
     try {
       const accessToken = await getLocalStorageItem("accessToken");

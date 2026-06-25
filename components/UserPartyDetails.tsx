@@ -60,7 +60,7 @@ export async function UserPartyDetails({ partyData }: UserPartyDetailsPrtops) {
       <div className="flex flex-col gap-2 mt-3">
         <p className="text-sm text-primary">
           <LocationPinIcon sx={{ color: "#FACC14" }} />{" "}
-          {partyData.merchant.location}
+          {partyData.merchant.name}
         </p>
         <p className="text-sm text-primary">
           <CalendarTodayIcon sx={{ color: "#FACC14" }} />{" "}

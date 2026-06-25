@@ -61,6 +61,12 @@ export async function createProduct(
   }
 }
 
+export type Category = {
+  id: number;
+  category: string;
+  description: string;
+};
+
 export interface GetSingleProduct {
   id: number;
   name: string;
@@ -69,12 +75,8 @@ export interface GetSingleProduct {
   quantity: number;
   status: "ACTIVE" | "INACTIVE" | "OUT_OF_STOCK";
   createdAt: string;
-  images: string[];
-  categories: {
-    id: number;
-    category: string;
-    description: string;
-  }[];
+  images: { id: number; path: string }[];
+  categories: Category[];
 }
 
 export async function getSingleProduct(
@@ -156,6 +158,42 @@ export async function deleteProduct(
     }
   } catch (err) {
     console.error("Failed to delete product:", err);
+    throw err;
+  }
+}
+
+export async function updateProduct(
+  accessToken: string,
+  productId: number,
+  payload: CreateProductPayload,
+  imageIds: number[],
+  retry: number = 0,
+): Promise<ProductData> {
+  if (!accessToken) {
+    throw new Error("Access token is missing");
+  }
+  try {
+    const res = await fetch(`${API_URL}/admin/products/${productId}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ...payload, imageIds }),
+    });
+    if (!res.ok && retry < 1) {
+      return await refreshToken(() =>
+        updateProduct(accessToken, productId, payload, imageIds, retry + 1),
+      );
+    }
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData?.message ?? "Failed to update product");
+    }
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error("Failed to update product:", err);
     throw err;
   }
 }

@@ -66,6 +66,8 @@ export function ReservationCardsSection({
       playerCount,
     );
 
+    console.log(result);
+
     setMerchantData(
       result.merchantOptions.map((m) => ({
         id: m.shopId,
@@ -74,6 +76,7 @@ export function ReservationCardsSection({
         phoneNumber: m.shopPhone,
         businessHours: m.businessHours,
         address: m.address,
+        facilities: m.facilities,
       })),
     );
     setSelectedGameId(gameId);
@@ -160,7 +163,7 @@ export function ReservationCardsSection({
       setMerchantData(merchants);
     }
     fetchDatas();
-  }, [boardgameQuery]);
+  }, [boardgameQuery, merchantQuery]);
 
   const gameSection = (
     <>
@@ -190,122 +193,121 @@ export function ReservationCardsSection({
     </>
   );
 
-  const provinces = [
-    { en: "Amnat Charoen", th: "อำนาจเจริญ" },
-    { en: "Ang Thong", th: "อ่างทอง" },
-    { en: "Bangkok", th: "กรุงเทพมหานคร" },
-    { en: "Bueng Kan", th: "บึงกาฬ" },
-    { en: "Buri Ram", th: "บุรีรัมย์" },
-    { en: "Chachoengsao", th: "ฉะเชิงเทรา" },
-    { en: "Chai Nat", th: "ชัยนาท" },
-    { en: "Chaiyaphum", th: "ชัยภูมิ" },
-    { en: "Chanthaburi", th: "จันทบุรี" },
-    { en: "Chiang Mai", th: "เชียงใหม่" },
-    { en: "Chiang Rai", th: "เชียงราย" },
-    { en: "Chon Buri", th: "ชลบุรี" },
-    { en: "Chumphon", th: "ชุมพร" },
-    { en: "Kalasin", th: "กาฬสินธุ์" },
-    { en: "Kamphaeng Phet", th: "กำแพงเพชร" },
-    { en: "Kanchanaburi", th: "กาญจนบุรี" },
-    { en: "Khon Kaen", th: "ขอนแก่น" },
-    { en: "Krabi", th: "กระบี่" },
-    { en: "Lampang", th: "ลำปาง" },
-    { en: "Lamphun", th: "ลำพูน" },
-    { en: "Loei", th: "เลย" },
-    { en: "Lop Buri", th: "ลพบุรี" },
-    { en: "Mae Hong Son", th: "แม่ฮ่องสอน" },
-    { en: "Maha Sarakham", th: "มหาสารคาม" },
-    { en: "Mukdahan", th: "มุกดาหาร" },
-    { en: "Nakhon Nayok", th: "นครนายก" },
-    { en: "Nakhon Pathom", th: "นครปฐม" },
-    { en: "Nakhon Phanom", th: "นครพนม" },
-    { en: "Nakhon Ratchasima", th: "นครราชสีมา" },
-    { en: "Nakhon Sawan", th: "นครสวรรค์" },
-    { en: "Nakhon Si Thammarat", th: "นครศรีธรรมราช" },
-    { en: "Nan", th: "น่าน" },
-    { en: "Narathiwat", th: "นราธิวาส" },
-    { en: "Nong Bua Lam Phu", th: "หนองบัวลำภู" },
-    { en: "Nong Khai", th: "หนองคาย" },
-    { en: "Nonthaburi", th: "นนทบุรี" },
-    { en: "Pathum Thani", th: "ปทุมธานี" },
-    { en: "Pattani", th: "ปัตตานี" },
-    { en: "Phang Nga", th: "พังงา" },
-    { en: "Phatthalung", th: "พัทลุง" },
-    { en: "Phayao", th: "พะเยา" },
-    { en: "Phetchabun", th: "เพชรบูรณ์" },
-    { en: "Phetchaburi", th: "เพชรบุรี" },
-    { en: "Phichit", th: "พิจิตร" },
-    { en: "Phitsanulok", th: "พิษณุโลก" },
-    { en: "Phra Nakhon Si Ayutthaya", th: "พระนครศรีอยุธยา" },
-    { en: "Phrae", th: "แพร่" },
-    { en: "Phuket", th: "ภูเก็ต" },
-    { en: "Prachin Buri", th: "ปราจีนบุรี" },
-    { en: "Prachuap Khiri Khan", th: "ประจวบคีรีขันธ์" },
-    { en: "Ranong", th: "ระนอง" },
-    { en: "Ratchaburi", th: "ราชบุรี" },
-    { en: "Rayong", th: "ระยอง" },
-    { en: "Roi Et", th: "ร้อยเอ็ด" },
-    { en: "Sa Kaeo", th: "สระแก้ว" },
-    { en: "Sakon Nakhon", th: "สกลนคร" },
-    { en: "Samut Prakan", th: "สมุทรปราการ" },
-    { en: "Samut Sakhon", th: "สมุทรสาคร" },
-    { en: "Samut Songkhram", th: "สมุทรสงคราม" },
-    { en: "Saraburi", th: "สระบุรี" },
-    { en: "Satun", th: "สตูล" },
-    { en: "Sing Buri", th: "สิงห์บุรี" },
-    { en: "Sisaket", th: "ศรีสะเกษ" },
-    { en: "Songkhla", th: "สงขลา" },
-    { en: "Sukhothai", th: "สุโขทัย" },
-    { en: "Suphan Buri", th: "สุพรรณบุรี" },
-    { en: "Surat Thani", th: "สุราษฎร์ธานี" },
-    { en: "Surin", th: "สุรินทร์" },
-    { en: "Tak", th: "ตาก" },
-    { en: "Trang", th: "ตรัง" },
-    { en: "Trat", th: "ตราด" },
-    { en: "Ubon Ratchathani", th: "อุบลราชธานี" },
-    { en: "Udon Thani", th: "อุดรธานี" },
-    { en: "Uthai Thani", th: "อุทัยธานี" },
-    { en: "Uttaradit", th: "อุตรดิตถ์" },
-    { en: "Yala", th: "ยะลา" },
-    { en: "Yasothon", th: "ยโสธร" },
-  ];
+  // const provinces = [
+  //   { en: "Amnat Charoen", th: "อำนาจเจริญ" },
+  //   { en: "Ang Thong", th: "อ่างทอง" },
+  //   { en: "Bangkok", th: "กรุงเทพมหานคร" },
+  //   { en: "Bueng Kan", th: "บึงกาฬ" },
+  //   { en: "Buri Ram", th: "บุรีรัมย์" },
+  //   { en: "Chachoengsao", th: "ฉะเชิงเทรา" },
+  //   { en: "Chai Nat", th: "ชัยนาท" },
+  //   { en: "Chaiyaphum", th: "ชัยภูมิ" },
+  //   { en: "Chanthaburi", th: "จันทบุรี" },
+  //   { en: "Chiang Mai", th: "เชียงใหม่" },
+  //   { en: "Chiang Rai", th: "เชียงราย" },
+  //   { en: "Chon Buri", th: "ชลบุรี" },
+  //   { en: "Chumphon", th: "ชุมพร" },
+  //   { en: "Kalasin", th: "กาฬสินธุ์" },
+  //   { en: "Kamphaeng Phet", th: "กำแพงเพชร" },
+  //   { en: "Kanchanaburi", th: "กาญจนบุรี" },
+  //   { en: "Khon Kaen", th: "ขอนแก่น" },
+  //   { en: "Krabi", th: "กระบี่" },
+  //   { en: "Lampang", th: "ลำปาง" },
+  //   { en: "Lamphun", th: "ลำพูน" },
+  //   { en: "Loei", th: "เลย" },
+  //   { en: "Lop Buri", th: "ลพบุรี" },
+  //   { en: "Mae Hong Son", th: "แม่ฮ่องสอน" },
+  //   { en: "Maha Sarakham", th: "มหาสารคาม" },
+  //   { en: "Mukdahan", th: "มุกดาหาร" },
+  //   { en: "Nakhon Nayok", th: "นครนายก" },
+  //   { en: "Nakhon Pathom", th: "นครปฐม" },
+  //   { en: "Nakhon Phanom", th: "นครพนม" },
+  //   { en: "Nakhon Ratchasima", th: "นครราชสีมา" },
+  //   { en: "Nakhon Sawan", th: "นครสวรรค์" },
+  //   { en: "Nakhon Si Thammarat", th: "นครศรีธรรมราช" },
+  //   { en: "Nan", th: "น่าน" },
+  //   { en: "Narathiwat", th: "นราธิวาส" },
+  //   { en: "Nong Bua Lam Phu", th: "หนองบัวลำภู" },
+  //   { en: "Nong Khai", th: "หนองคาย" },
+  //   { en: "Nonthaburi", th: "นนทบุรี" },
+  //   { en: "Pathum Thani", th: "ปทุมธานี" },
+  //   { en: "Pattani", th: "ปัตตานี" },
+  //   { en: "Phang Nga", th: "พังงา" },
+  //   { en: "Phatthalung", th: "พัทลุง" },
+  //   { en: "Phayao", th: "พะเยา" },
+  //   { en: "Phetchabun", th: "เพชรบูรณ์" },
+  //   { en: "Phetchaburi", th: "เพชรบุรี" },
+  //   { en: "Phichit", th: "พิจิตร" },
+  //   { en: "Phitsanulok", th: "พิษณุโลก" },
+  //   { en: "Phra Nakhon Si Ayutthaya", th: "พระนครศรีอยุธยา" },
+  //   { en: "Phrae", th: "แพร่" },
+  //   { en: "Phuket", th: "ภูเก็ต" },
+  //   { en: "Prachin Buri", th: "ปราจีนบุรี" },
+  //   { en: "Prachuap Khiri Khan", th: "ประจวบคีรีขันธ์" },
+  //   { en: "Ranong", th: "ระนอง" },
+  //   { en: "Ratchaburi", th: "ราชบุรี" },
+  //   { en: "Rayong", th: "ระยอง" },
+  //   { en: "Roi Et", th: "ร้อยเอ็ด" },
+  //   { en: "Sa Kaeo", th: "สระแก้ว" },
+  //   { en: "Sakon Nakhon", th: "สกลนคร" },
+  //   { en: "Samut Prakan", th: "สมุทรปราการ" },
+  //   { en: "Samut Sakhon", th: "สมุทรสาคร" },
+  //   { en: "Samut Songkhram", th: "สมุทรสงคราม" },
+  //   { en: "Saraburi", th: "สระบุรี" },
+  //   { en: "Satun", th: "สตูล" },
+  //   { en: "Sing Buri", th: "สิงห์บุรี" },
+  //   { en: "Sisaket", th: "ศรีสะเกษ" },
+  //   { en: "Songkhla", th: "สงขลา" },
+  //   { en: "Sukhothai", th: "สุโขทัย" },
+  //   { en: "Suphan Buri", th: "สุพรรณบุรี" },
+  //   { en: "Surat Thani", th: "สุราษฎร์ธานี" },
+  //   { en: "Surin", th: "สุรินทร์" },
+  //   { en: "Tak", th: "ตาก" },
+  //   { en: "Trang", th: "ตรัง" },
+  //   { en: "Trat", th: "ตราด" },
+  //   { en: "Ubon Ratchathani", th: "อุบลราชธานี" },
+  //   { en: "Udon Thani", th: "อุดรธานี" },
+  //   { en: "Uthai Thani", th: "อุทัยธานี" },
+  //   { en: "Uttaradit", th: "อุตรดิตถ์" },
+  //   { en: "Yala", th: "ยะลา" },
+  //   { en: "Yasothon", th: "ยโสธร" },
+  // ];
 
   const shopSection = (
     <>
       <div className="w-full my-7">
-        <select
+        {/* <select
           className={`col-span-full bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 w-full focus:ring-[#FACC14]`}
         >
           <option>All Provinces</option>
           {provinces.map(({ th }) => (
             <option key={th}>{th}</option>
           ))}
-        </select>
+        </select> */}
         <input
-          className="bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14] w-full mt-6"
+          className="bg-[#EEF2F6] ring ring-[#627384] ring-1 outline-none rounded-md h-11 px-4 focus:ring-2 focus:ring-[#FACC14] w-full"
           placeholder="Search merchants..."
           type="text"
-          onChange={(event) => setshopQuery(event.target.value)}
+          onChange={(event) => handleShopSearch(event.target.value)}
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6 mb-6">
-        {merchanteData.map(({ id, name, address, businessHours }, index) => (
-          <ShopReservationCard
-            key={index}
-            isSelected={selectedMercantId === id}
-            onClick={() => setSelectedMerchantId(id)}
-            shopName={name}
-            location={address}
-            openingHours={businessHours}
-            imageUrl={""}
-            tags={[
-              "Food and Drink",
-              "Air Conditioning",
-              "Parking Available",
-              "Cozy Atmosphere",
-            ]}
-          />
-        ))}
+        {merchanteData.length > 0
+          ? merchanteData.map(
+              ({ id, name, address, businessHours, facilities }, index) => (
+                <ShopReservationCard
+                  key={index}
+                  isSelected={selectedMercantId === id}
+                  onClick={() => setSelectedMerchantId(id)}
+                  shopName={name}
+                  location={address}
+                  openingHours={businessHours}
+                  imageUrl={""}
+                  tags={facilities}
+                />
+              ),
+            )
+          : null}
       </div>
     </>
   );

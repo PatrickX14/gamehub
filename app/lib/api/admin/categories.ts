@@ -1,18 +1,17 @@
-import { getLocalStorageItem, refreshToken } from "../utils";
-
 const API_URL = process.env.API_URL ?? "http://localhost:3000";
+
+export type Category = {
+  id: number;
+  category: string;
+};
 
 export interface CategoryData {
   total: number;
-  data: {
-    id: number;
-    category: string;
-  }[];
+  data: Category[];
 }
 
 export async function getCategories(
   accessToken: string,
-  retry: number = 0,
 ): Promise<CategoryData> {
   if (!accessToken) {
     throw new Error("Access token is missing");
@@ -24,9 +23,6 @@ export async function getCategories(
         Authorization: `Bearer ${accessToken}`,
       },
     });
-    if (!res.ok && retry < 1) {
-      return await refreshToken(() => getCategories(accessToken, retry + 1));
-    }
     if (!res.ok) {
       const errData = await res.json().catch(() => ({}));
       throw new Error(errData?.message ?? "Failed to fetch categories");

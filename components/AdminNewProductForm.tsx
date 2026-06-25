@@ -1,7 +1,7 @@
 "use client";
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { SectionCard } from "./Cards";
-import { ImagesUpload, TextInput } from "./Input";
+import { TextInput } from "./Input";
 import {
   createProduct,
   CreateProductPayload,
@@ -10,6 +10,7 @@ import { getLocalStorageItem } from "@/app/lib/api/utils";
 import { getCategories } from "@/app/lib/api/admin/categories";
 import { Select } from "antd";
 import { uploadImages } from "@/app/lib/api/admin/images";
+import { MerchantProductImageInput, ProductImageItem } from "./MerchantProductImageInput";
 interface Category {
   value: number;
   label: string; // mapped from CategoryData.data[].category
@@ -24,7 +25,7 @@ export function AdminNewProductForm() {
   );
   const [formState, setFormState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [images, setImages] = useState<{ file: File; url: string }[]>([]);
+  const [images, setImages] = useState<ProductImageItem[]>([]);
 
   // Fetch categories on mount so the dropdown is populated.
   // If you have a getCategories API, replace the placeholder below.
@@ -48,18 +49,7 @@ export function AdminNewProductForm() {
     fetchCategories();
   }, []);
 
-  function addFiles(newFiles: File[]) {
-    if (!newFiles.length) return;
 
-    const accepted = newFiles.filter((f) => f.type.startsWith("image/"));
-
-    const withUrl = accepted.map((file) => ({
-      file,
-      url: URL.createObjectURL(file),
-    }));
-
-    setImages((prev) => [...prev, ...withUrl]);
-  }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -102,10 +92,11 @@ export function AdminNewProductForm() {
         quantity,
       };
 
-      const imageIds: number[] = await uploadImages(
-        token,
-        images.map(({ file }) => file),
-      );
+      const newFiles = images.map(({ file }) => file).filter((f): f is File => !!f);
+      let imageIds: number[] = [];
+      if (newFiles.length > 0) {
+        imageIds = await uploadImages(token, newFiles);
+      }
 
       await createProduct(token, payload, imageIds);
       setFormState("success");
@@ -142,7 +133,10 @@ export function AdminNewProductForm() {
           />
         </div>
         <TextInput name={"description"} label={"Description"} required />
-
+        <MerchantProductImageInput
+          images={images}
+          onChange={(updatedImages) => setImages(updatedImages)}
+        />
         {formState === "success" && (
           <p className="text-sm text-green-600 font-medium">
             ✓ Product created successfully!
@@ -151,7 +145,6 @@ export function AdminNewProductForm() {
         {formState === "error" && errorMessage && (
           <p className="text-sm text-red-500 font-medium">✕ {errorMessage}</p>
         )}
-        <ImagesUpload onChange={(files) => addFiles(files)} />
         <button
           type="submit"
           disabled={formState === "loading"}

@@ -5,13 +5,15 @@ import { SearchbarWithIcon } from "@/components/searchbarWithIcon";
 import { PartyCardProps } from "@/components/partyCard";
 import { PartyDetailModal } from "@/components/partyDetailModal";
 import { CreatePartyModal } from "@/components/createPartyModal";
-import { PartyCard } from "@/components/PartyCard";
+
 import { joinParty, Session } from "@/app/lib/api/users/party";
 
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone.js";
 import utc from "dayjs/plugin/utc.js";
 import { notification } from "antd";
+import { PartyCard } from "./PartyCard";
+import { useRouter } from "next/navigation";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -21,6 +23,7 @@ type Prop = {
 };
 
 export default function DEMOPartyPage({ data, accessToken }: Prop) {
+  const router = useRouter();
   const [api, contextHolder] = notification.useNotification();
   const [filterOpen, setFilterOpen] = useState(false);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
@@ -50,8 +53,15 @@ export default function DEMOPartyPage({ data, accessToken }: Prop) {
 
   async function handlePartyJoin(partyId: number) {
     try {
-      const res = await joinParty(accessToken, partyId);
-      console.log(res);
+      await joinParty(accessToken, partyId);
+      api.info({
+        title: "Join request sent",
+        description: "Wait for party leader approval",
+        placement: "topRight",
+        showProgress: true,
+        pauseOnHover: true,
+      });
+      router.refresh();
     } catch (err) {
       api.error({ title: "Something went wrong when trying to join party" });
     }
@@ -62,11 +72,10 @@ export default function DEMOPartyPage({ data, accessToken }: Prop) {
       {contextHolder}
       <section className="mb-6">
         <h1 className="text-[#364049] text-center font-bold text-4xl">
-          Create or find a party
+          Find a party
         </h1>
         <p className="text-[#627384] text-center">
-          Team up instantly — start a new party or discover the perfect group to
-          join. <br />
+          Team up instantly — discover the perfect group to join. <br />
           Your next adventure begins here.
         </p>
       </section>

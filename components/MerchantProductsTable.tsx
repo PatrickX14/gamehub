@@ -119,6 +119,9 @@ export function MerchantProductsTable({
               <th className="border-x border-gray-300 px-4 py-2 text-left text-primary">
                 Price
               </th>
+              <th className="border-x border-gray-300 px-4 py-2 text-left text-primary">
+                Quantity
+              </th>
               <th className="px-4 py-2 text-left text-primary">Status </th>
               <th className="border-x border-gray-300 px-4 py-2 text-left text-primary">
                 Date
@@ -128,40 +131,45 @@ export function MerchantProductsTable({
           </thead>
           <tbody>
             {pagedData &&
-              pagedData.map(({ id, createdAt, status, name, price }) => (
-                <tr key={id} className="group">
-                  <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                    {id}
-                  </td>
-                  <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                    {name}
-                  </td>
-                  <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                    ฿{Number(price).toLocaleString()}
-                  </td>
-                  <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                    {status}
-                  </td>
-                  <td className="border-gray-300 px-4 py-2 text-left text-primary">
-                    {new Date(createdAt).toLocaleString("en-GB", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                      hour12: false,
-                    })}
-                  </td>
-                  <td className="border-gray-300  py-2 text-left text-primary">
-                    <div className="flex justify-center gap-2">
-                      <ViewButton segment={"products"} param={id} />
-                      <EditButton segment={"products/edit"} param={id} />
-                      <DeleteButton id={id} />
-                    </div>
-                  </td>
-                </tr>
-              ))}
+              pagedData.map(
+                ({ id, createdAt, status, name, price, quantity }) => (
+                  <tr key={id} className="group">
+                    <td className="border-gray-300 px-4 py-2 text-left text-primary">
+                      {id}
+                    </td>
+                    <td className="border-gray-300 px-4 py-2 text-left text-primary">
+                      {name}
+                    </td>
+                    <td className="border-gray-300 px-4 py-2 text-left text-primary">
+                      ฿{Number(price).toLocaleString()}
+                    </td>
+                    <td className="border-gray-300 px-4 py-2 text-left text-primary">
+                      {quantity}
+                    </td>
+                    <td className="border-gray-300 px-4 py-2 text-left text-primary">
+                      {status}
+                    </td>
+                    <td className="border-gray-300 px-4 py-2 text-left text-primary">
+                      {new Date(createdAt).toLocaleString("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: false,
+                      })}
+                    </td>
+                    <td className="border-gray-300  py-2 text-left text-primary">
+                      <div className="flex justify-center gap-2">
+                        <ViewButton segment={"products"} param={id} />
+                        <EditButton segment={"products/edit"} param={id} />
+                        <DeleteButton id={id} />
+                      </div>
+                    </td>
+                  </tr>
+                ),
+              )}
           </tbody>
         </table>
         {/* Pagination */}

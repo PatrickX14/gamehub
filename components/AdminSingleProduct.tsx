@@ -81,7 +81,7 @@ export function AdminSingleProduct({ productId }: AdminSingleProductProps) {
                   {productData.images.map((image, index) => (
                     <Image
                       key={index}
-                      src={image}
+                      src={image.path}
                       alt={"product images"}
                       width={200}
                       height={200}

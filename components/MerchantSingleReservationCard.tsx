@@ -50,7 +50,7 @@ export function MerchantSingleReservationCard({
             variant="solid"
             color={
               data?.status === "PENDING APPROVAL"
-                ? "orange-inverse"
+                ? "orange"
                 : data?.status === "CANCELLED"
                   ? "red"
                   : data?.status === "CONFIRMED"
@@ -70,7 +70,7 @@ export function MerchantSingleReservationCard({
       <div className="grid grid-cols-2 gap-6 mb-3">
         <TextInput
           name={"hostName"}
-          label={"Hosted by"}
+          label={"Booked by"}
           defaultValue={data?.hostName}
           disabled
         />

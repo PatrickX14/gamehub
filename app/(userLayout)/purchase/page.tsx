@@ -11,6 +11,7 @@ export default async function PurchasePage() {
     redirect("/login");
   }
   const orders = await fetchUserOrders(accessToken.value);
+  console.log(orders);
   return (
     <div className="xl:px-30 grid grid-cols-3 gap-4">
       {/* profile menu */}

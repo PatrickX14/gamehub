@@ -44,8 +44,8 @@ export function ShopReservationCard({
 
       {/* tags */}
       <div className="mt-3 ">
-        {tags.map((tag) => (
-          <div key={tag} className="flex gap-2 items-center">
+        {tags.map((tag, index) => (
+          <div key={index} className="flex gap-2 items-center">
             <CheckIcon fontSize="small" className="text-[#16A249]" />
             <p className="text-[#94A3B8]">{tag}</p>
           </div>

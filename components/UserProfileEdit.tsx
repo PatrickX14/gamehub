@@ -28,13 +28,17 @@ const genders: GenderOptions = [
 ];
 
 type ProfileEditProps = {
-  shopName: string;
+  firstName: string;
+  lastName: string;
+  shopName?: string;
   phoneNumber: string;
   email: string;
   adminMode?: boolean;
 };
 
 export function ProfileEdit({
+  firstName,
+  lastName,
   shopName,
   email,
   phoneNumber,
@@ -43,7 +47,7 @@ export function ProfileEdit({
   const [gender, setSelectGender] = useState<Genders>("MALE");
   const [profileData, setProfileData] = useState<UpdateMerchantProfilePayload>({
     email: email,
-    name: shopName,
+    name: firstName,
     phoneNumber: phoneNumber,
   });
 
@@ -88,13 +92,13 @@ export function ProfileEdit({
             <TextInput
               name={"firstName"}
               label={"First name*"}
-              defaultValue={"Kitjapong"}
+              defaultValue={firstName}
               required
             />
             <TextInput
               name={"lastName"}
               label={"Last name*"}
-              defaultValue={"Pongpattanakitja"}
+              defaultValue={lastName}
               required
             />
           </>

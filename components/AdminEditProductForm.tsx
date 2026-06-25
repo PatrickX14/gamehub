@@ -1,76 +1,44 @@
 "use client";
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import { SectionCard } from "./Cards";
-import { ImagesUpload, TextInput } from "./Input";
+import { TextInput } from "./Input";
 import {
-  createProduct,
+  updateProduct,
   CreateProductPayload,
   GetSingleProduct,
-  getSingleProduct,
 } from "@/app/lib/api/admin/products";
 import { getLocalStorageItem } from "@/app/lib/api/utils";
-import { getCategories } from "@/app/lib/api/admin/categories";
-import { Select } from "antd";
+import { GetProp, Select } from "antd";
 import { uploadImages } from "@/app/lib/api/admin/images";
-interface Category {
-  value: number;
-  label: string; // mapped from CategoryData.data[].category
-}
+import { Category } from "@/app/lib/api/admin/categories";
+import { MerchantProductImageInput, ProductImageItem } from "./MerchantProductImageInput";
 
 type FormState = "idle" | "loading" | "success" | "error";
+
 type AdminEditProductFormProps = {
-  productId: string;
+  productData: GetSingleProduct;
+  catagoriesData: Category[];
+  accessToken: string;
 };
 
-export function AdminEditProductForm({ productId }: AdminEditProductFormProps) {
-  const [productData, setProductData] = useState<GetSingleProduct | null>();
-  const [categories, setCategories] = useState<Category[]>([]);
+type SelectOptions = GetProp<typeof Select, "options">;
+
+export function AdminEditProductForm({
+  productData,
+  catagoriesData,
+  accessToken,
+}: AdminEditProductFormProps) {
   const [selectedCategoryId, setSelectedCategoryId] = useState<number[] | null>(
-    null,
+    productData.categories.map(({ id }) => id),
   );
   const [formState, setFormState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [images, setImages] = useState<{ file: File; url: string }[]>([]);
-
-  // Fetch categories on mount so the dropdown is populated.
-  // If you have a getCategories API, replace the placeholder below.
-  useEffect(() => {
-    async function fetchCategories() {
-      try {
-        const token = await getLocalStorageItem("accessToken");
-        if (!token) return;
-
-        const category = await getCategories(token);
-        const product = await getSingleProduct(token, Number(productId));
-        const mappedCategory: Category[] = category.data.map((c) => ({
-          value: c.id,
-          label: c.category,
-        }));
-        setCategories(mappedCategory);
-        setProductData(product);
-        setSelectedCategoryId(product.categories.map(({ id }) => id));
-      } catch (err) {
-        console.error("Failed to fetch categories:", err);
-      }
-    }
-    fetchCategories();
-  }, []);
-
-  function addFiles(newFiles: FileList | File[] | null) {
-    if (!newFiles) return;
-    // Checks if file is image
-    const accepted = Array.from(newFiles).filter((f) =>
-      f.type.startsWith("image/"),
-    );
-    const withUrl = accepted.map((file) => ({
-      file,
-      url: URL.createObjectURL(file),
-    }));
-    setImages((prev) => {
-      const merged = [...prev, ...withUrl];
-      return merged;
-    });
-  }
+  const [images, setImages] = useState<ProductImageItem[]>(
+    productData.images.map((img) => ({
+      id: img.id,
+      url: img.path,
+    })),
+  );
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -98,13 +66,6 @@ export function AdminEditProductForm({ productId }: AdminEditProductFormProps) {
     }
 
     try {
-      const token = await getLocalStorageItem("accessToken");
-      if (!token) {
-        setErrorMessage("You are not authenticated. Please log in again.");
-        setFormState("error");
-        return;
-      }
-
       const payload: CreateProductPayload = {
         categoryId: selectedCategoryId,
         name,
@@ -113,14 +74,17 @@ export function AdminEditProductForm({ productId }: AdminEditProductFormProps) {
         quantity,
       };
 
-      const imageIds: number[] = await uploadImages(
-        token,
-        images.map(({ file }) => file),
-      );
+      const newFiles = images.map(({ file }) => file).filter((f): f is File => !!f);
+      let uploadedImageIds: number[] = [];
+      if (newFiles.length > 0) {
+        uploadedImageIds = await uploadImages(accessToken, newFiles);
+      }
 
-      await createProduct(token, payload, imageIds);
+      const existingImageIds = images.map(({ id }) => id).filter((id): id is number => id !== undefined);
+      const finalImageIds = [...existingImageIds, ...uploadedImageIds];
+
+      await updateProduct(accessToken, productData.id, payload, finalImageIds);
       setFormState("success");
-      form.reset();
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "An unexpected error occurred.";
@@ -129,10 +93,15 @@ export function AdminEditProductForm({ productId }: AdminEditProductFormProps) {
     }
   }
 
+  const options: SelectOptions = catagoriesData.map(({ id, category }) => ({
+    value: id,
+    label: category,
+  }));
+
   return (
     <SectionCard
-      title={"Add Product"}
-      description={"Fill out this form to create a new product"}
+      title={"Edit Product"}
+      description={"Fill out this form to edit the product"}
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <TextInput
@@ -160,10 +129,11 @@ export function AdminEditProductForm({ productId }: AdminEditProductFormProps) {
           <Select
             mode="multiple"
             className="w-full"
-            options={categories}
+            options={options}
+            defaultValue={productData.categories.map(({ id }) => id)}
             showSearch={{ optionFilterProp: "label" }}
             allowClear
-            value={selectedCategoryId}
+            // value={selectedCategoryId}
             onChange={(values) => setSelectedCategoryId(values)}
           />
         </div>
@@ -176,13 +146,16 @@ export function AdminEditProductForm({ productId }: AdminEditProductFormProps) {
 
         {formState === "success" && (
           <p className="text-sm text-green-600 font-medium">
-            ✓ Product created successfully!
+            ✓ Product updated successfully!
           </p>
         )}
         {formState === "error" && errorMessage && (
           <p className="text-sm text-red-500 font-medium">✕ {errorMessage}</p>
         )}
-        <ImagesUpload onChange={(files) => addFiles(files)} />
+        <MerchantProductImageInput
+          images={images}
+          onChange={(updatedImages) => setImages(updatedImages)}
+        />
         <button
           type="submit"
           disabled={formState === "loading"}

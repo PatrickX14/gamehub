@@ -187,7 +187,7 @@ export function MerchantReservationTable({
                         variant="solid"
                         color={
                           status === "PENDING APPROVAL"
-                            ? "orange-inverse"
+                            ? "orange"
                             : status === "CANCELLED"
                               ? "red"
                               : status === "CONFIRMED"

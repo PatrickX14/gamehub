@@ -148,6 +148,7 @@ export type MerchantData = {
   phoneNumber: string;
   businessHours: string[];
   address: string;
+  facilities: string[];
 };
 
 type GetMerchantsForReservationsResponse = {
@@ -201,6 +202,7 @@ export type MerchantOption = {
   businessHours: string[];
   address: string;
   tables: ReservationTable[];
+  facilities: string[];
 };
 
 export type GetMerchantOptionsResponse = {

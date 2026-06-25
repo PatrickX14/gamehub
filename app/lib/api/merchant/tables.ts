@@ -7,7 +7,7 @@ type CreateProductPayload = {
   pricePerHour: number;
 };
 
-type Table = {
+export type Table = {
   id: number;
   ownerId: number;
   seats: number;

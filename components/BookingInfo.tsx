@@ -40,7 +40,7 @@ export default function BookingInfo({
           variant="solid"
           color={
             status === "PENDING_APPROVAL"
-              ? "orange-inverse"
+              ? "orange"
               : status === "CANCELLED"
                 ? "red"
                 : status === "CONFIRMED"

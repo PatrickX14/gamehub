@@ -164,7 +164,7 @@ export function OrdersTable({
                       variant="solid"
                       color={
                         status === "ORDER_PLACED"
-                          ? "orange-inverse"
+                          ? "orange"
                           : status === "CANCELLED"
                             ? "red"
                             : status === "CONFIRMED"

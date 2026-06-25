@@ -1,7 +1,6 @@
 "use client";
 import { PaymentInfoCard } from "@/components/PaymentInfoCard";
 import { Form, notification } from "antd";
-import ReservationPaymentSuccessModal from "./ReservationPaymentSuccessModal";
 import { useState } from "react";
 import OrderPaymentSummaryCard from "./OrderPaymentSummaryCard";
 import {
@@ -9,6 +8,7 @@ import {
   OrderResponse,
   userPayOrder,
 } from "@/app/lib/api/users/order";
+import OrderPaymentSuccessModal from "./OrderPaymentSuccessModal";
 
 type ReservationPaymentProps = {
   order: OrderResponse;
@@ -46,7 +46,7 @@ export function OrderPaymentForm({
   return (
     <div>
       {contextHolder}
-      <ReservationPaymentSuccessModal isOpen={isModalOpen} />
+      <OrderPaymentSuccessModal isOpen={isModalOpen} />
       <Form
         form={form}
         className="grid grid-cols-3 gap-6 px-6"

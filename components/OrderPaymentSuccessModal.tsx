@@ -2,13 +2,13 @@
 import { Button, Modal, Result } from "antd";
 import { useRouter } from "next/navigation";
 
-export type ReservationPaymentSuccessModalProps = {
+export type OrderPaymentSuccessModal = {
   isOpen: boolean;
 };
 
-export default function ReservationPaymentSuccessModal({
+export default function OrderPaymentSuccessModal({
   isOpen,
-}: ReservationPaymentSuccessModalProps) {
+}: OrderPaymentSuccessModal) {
   const router = useRouter();
   return (
     <Modal open={isOpen} closeIcon={null} footer={null} centered>
@@ -19,9 +19,9 @@ export default function ReservationPaymentSuccessModal({
           <Button
             type="primary"
             key="navigateButton"
-            onClick={() => router.replace("/bookings")}
+            onClick={() => router.replace("/purchase")}
           >
-            Go to reservations
+            Go to purchases
           </Button>,
         ]}
       />

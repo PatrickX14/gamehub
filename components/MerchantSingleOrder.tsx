@@ -92,7 +92,7 @@ export function MerchantSingleOrder({
             variant="solid"
             color={
               data.status === "ORDER_PLACED"
-                ? "orange-inverse"
+                ? "orange"
                 : data.status === "CANCELLED"
                   ? "red"
                   : data.status === "CONFIRMED"
